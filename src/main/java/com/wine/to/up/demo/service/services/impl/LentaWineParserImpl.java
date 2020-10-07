@@ -19,7 +19,7 @@ public class LentaWineParserImpl {
     public LentaWineParserImpl() {
     }
 
-    public void parseTitle() throws IOException {
+    public static void parseTitle() throws IOException {
 
         String url = "https://lenta.com/catalog/alkogolnye-napitki/vino/";
         String agentText = "Don't ban us pls, we just want to get scores in uni";
