@@ -26,18 +26,20 @@ public class LentaWineParserService {
     }
 
     private ProductDTO getProductDTO(JSONObject jsonObject) {
+        System.out.println();
         return ProductDTO.builder()
                 .brand(jsonObject.getString("wineName"))
                 .country(jsonObject.getString("wineCountry"))
                 .image(jsonObject.getString("wineImage"))
-                .rating(Float.parseFloat(jsonObject.getString("wineRating")))
-                .discount(Integer.parseInt(jsonObject.getString("wineDiscountPercentage")
+                .rating(jsonObject.get("wineRating").equals("") ? 0.0f : jsonObject.getInt("wineRating"))
+                .discount(jsonObject.get("wineDiscountPercentage").equals("") ? 0 : Integer.parseInt(jsonObject.getString("wineDiscountPercentage")
                         .replace("%","")))
                 .price(Float.parseFloat(jsonObject.getString("winePriceDiscount")
                         .replace(" ₽","")
                         .replace(" ",".")))
                 .oldPrice(Float.parseFloat(jsonObject.getString("winePriceNormal")
                         .replace(" ₽","")
+                        .replace("1 ", "1")
                         .replace(" ",".")))
                 .build();
     }
