@@ -14,23 +14,21 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class LentaWineParserService {
 
-    public List<Optional<ProductDTO>> parseWineList(ParserRsp wineList) {
+    public List<ProductDTO> parseWineList(List<JSONObject> wineList) {
 
-        List<Optional<ProductDTO>> productDTOList = new ArrayList<>();
+        List<ProductDTO> productDTOList = new ArrayList<>();
 
-        List<JSONObject> productList = wineList.getWineList()
-                .stream()
-                .map(Optional::get)
-                .collect(Collectors.toList());
+//        List<JSONObject> productList = wineList.getWineList();
 
-        for (JSONObject jsonObject : productList) {
+
+        for (JSONObject jsonObject : wineList) {
             productDTOList.add(getProductDTO(jsonObject));
         }
         return productDTOList;
     }
 
-    private Optional<ProductDTO> getProductDTO(JSONObject jsonObject) {
-        return Optional.of(ProductDTO.builder()
+    private ProductDTO getProductDTO(JSONObject jsonObject) {
+        return ProductDTO.builder()
                 .brand(jsonObject.getString("wineName"))
                 .country(jsonObject.getString("wineCountry"))
                 .image(jsonObject.getString("wineImage"))
@@ -43,7 +41,7 @@ public class LentaWineParserService {
                 .oldPrice(Float.parseFloat(jsonObject.getString("winePriceNormal")
                         .replace(" ₽","")
                         .replace(" ",".")))
-                .build());
+                .build();
     }
 
 

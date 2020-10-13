@@ -1,5 +1,6 @@
 package com.wine.to.up.lenta.service.parser;
 
+import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,12 +29,12 @@ public class ParserReqService {
     private final String userAgent;
 
     @SneakyThrows
-    public ParserRsp getJsonList() {
+    public List<JSONObject> getJsonList() {
 
         Document page = Jsoup.connect(baseUrl).userAgent(userAgent).get();
         String wineSelector = "div.catalog-grid-container.catalog-page__grid > div > div > a";
         Elements wineElements = page.select(wineSelector);
-        ParserRsp wineList = new ParserRsp();
+        List<JSONObject> wineList = new ArrayList<>();
 
         Pattern wineNamePatternEN = Pattern.compile("\\b[A-Z]+\\b");
         Pattern wineNamePatternRU = Pattern.compile("\\b[А-Я][А-Я0-9]+\\b");
@@ -116,7 +117,7 @@ public class ParserReqService {
                     .put("wineName", Optional.of(wineName))
                     .put("wineType", Optional.of(wineType));
 
-            wineList.add(Optional.of(jsonString));
+            wineList.add(jsonString);
         }
 
         return wineList;
