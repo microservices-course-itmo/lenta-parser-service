@@ -1,32 +1,39 @@
-package com.wine.to.up.demo.service.services.impl;
+package com.wine.to.up.lenta.service.parser;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LentaWineParserImpl {
+@Slf4j
+@AllArgsConstructor
+@Getter
+@Setter
+public class ParserReqService {
 
-    public LentaWineParserImpl() {
-    }
+    private final String baseUrl;
 
-    public static void parseTitle() throws IOException {
+    private final String userAgent;
 
-        String url = "https://lenta.com/catalog/alkogolnye-napitki/vino/";
-        String agentText = "Don't ban us pls, we just want to get scores in uni";
-        Document page = Jsoup.connect(url).userAgent(agentText).get();
+    @SneakyThrows
+    public ParserRsp getJsonList() {
+
+        Document page = Jsoup.connect(baseUrl).userAgent(userAgent).get();
         String wineSelector = "div.catalog-grid-container.catalog-page__grid > div > div > a";
         Elements wineElements = page.select(wineSelector);
-        ArrayList<JSONObject> wineList = new ArrayList<>();
+        ParserRsp wineList = new ParserRsp();
 
         Pattern wineNamePatternEN = Pattern.compile("\\b[A-Z]+\\b");
         Pattern wineNamePatternRU = Pattern.compile("\\b[А-Я][А-Я0-9]+\\b");
@@ -57,10 +64,10 @@ public class LentaWineParserImpl {
             String[] wineSplitArray = wineTitle.split("\\,");
 
             if (wineSplitArray.length > 1) {
-                wineCountry =  wineSplitArray[wineSplitArray.length - 2];
+                wineCountry = wineSplitArray[wineSplitArray.length - 2];
                 wineVolume = wineSplitArray[wineSplitArray.length - 1];
             } else {
-                wineCountry =  wineSplitArray[wineSplitArray.length - 1];
+                wineCountry = wineSplitArray[wineSplitArray.length - 1];
                 wineVolume = wineSplitArray[0];
             }
 
@@ -90,53 +97,29 @@ public class LentaWineParserImpl {
                 }
             }
 
-            for (String s : fullName)
-            {
+            for (String s : fullName) {
                 wineName += s + " ";
             }
 
             wineName = wineName.replace("L", "").replace("DO", "");
-            wineImage = wineImage.replace("?preset=thumbnail","");
+            wineImage = wineImage.replace("?preset=thumbnail", "");
 
             JSONObject jsonString = new JSONObject()
-                    .put("wineTitle", wineTitle)
-                    .put("wineImage", wineImage)
-                    .put("winePriceNormal", winePriceNormal)
-                    .put("winePriceDiscount", winePriceDiscount)
-                    .put("wineDiscountPercentage", wineDiscountPercentage)
-                    .put("wineRating", allStars.size())
-                    .put("wineCountry", wineCountry)
-                    .put("wineVolume", wineVolume)
-                    .put("wineName", wineName)
-                    .put("wineType", wineType);
+                    .put("wineTitle", Optional.of(wineTitle))
+                    .put("wineImage", Optional.of(wineImage))
+                    .put("winePriceNormal", Optional.of(winePriceNormal))
+                    .put("winePriceDiscount", Optional.of(winePriceDiscount))
+                    .put("wineDiscountPercentage", Optional.of(wineDiscountPercentage))
+                    .put("wineRating", Optional.of(allStars.size()))
+                    .put("wineCountry", Optional.of(wineCountry))
+                    .put("wineVolume", Optional.of(wineVolume))
+                    .put("wineName", Optional.of(wineName))
+                    .put("wineType", Optional.of(wineType));
 
-            wineList.add(jsonString);
-            System.out.println(wineList);
+            wineList.add(Optional.of(jsonString));
         }
 
-        Iterator wine_iterator = wineList.iterator();
-
-        FileWriter writer = new FileWriter("file1.txt", true);
-
-        while (wine_iterator.hasNext()) {
-
-            JSONObject next_wine = (JSONObject) wine_iterator.next();
-            if (next_wine.has("wineTitle") && !next_wine.getString("wineTitle").isBlank()) {
-                next_wine.keySet().forEach(keyStr ->
-                {
-                    Object keyValue = next_wine.get(keyStr);
-                    System.out.println("\uD83C\uDF77" + keyStr + " \uD83E\uDD74 " + keyValue);
-                    try {
-                        writer.write("\uD83C\uDF77" + keyStr + " \uD83E\uDD74 " + keyValue + "\n");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-                writer.write(next_wine.toString());
-                System.out.print("\n\n\n");
-            }
-        }
-
+        return wineList;
     }
-}
 
+}
