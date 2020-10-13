@@ -1,6 +1,5 @@
 package com.wine.to.up.lenta.service.parser;
 
-import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,12 +27,12 @@ public class ParserReqService {
     private final String userAgent;
 
     @SneakyThrows
-    public List<JSONObject> getJsonList() {
+    public ParserRsp getJsonList() {
 
         Document page = Jsoup.connect(baseUrl).userAgent(userAgent).get();
         String wineSelector = "div.catalog-grid-container.catalog-page__grid > div > div > a";
         Elements wineElements = page.select(wineSelector);
-        List<JSONObject> wineList = new ArrayList<>();
+        ParserRsp wineList = new ParserRsp();
 
         Pattern wineNamePatternEN = Pattern.compile("\\b[A-Z]+\\b");
         Pattern wineNamePatternRU = Pattern.compile("\\b[А-Я][А-Я0-9]+\\b");
@@ -106,16 +104,16 @@ public class ParserReqService {
             wineImage = wineImage.replace("?preset=thumbnail", "");
 
             JSONObject jsonString = new JSONObject()
-                    .put("wineTitle", Optional.of(wineTitle))
-                    .put("wineImage", Optional.of(wineImage))
-                    .put("winePriceNormal", Optional.of(winePriceNormal))
-                    .put("winePriceDiscount", Optional.of(winePriceDiscount))
-                    .put("wineDiscountPercentage", Optional.of(wineDiscountPercentage))
-                    .put("wineRating", Optional.of(allStars.size()))
-                    .put("wineCountry", Optional.of(wineCountry))
-                    .put("wineVolume", Optional.of(wineVolume))
-                    .put("wineName", Optional.of(wineName))
-                    .put("wineType", Optional.of(wineType));
+                    .put("wineTitle", wineTitle)
+                    .put("wineImage", wineImage)
+                    .put("winePriceNormal", winePriceNormal)
+                    .put("winePriceDiscount", winePriceDiscount)
+                    .put("wineDiscountPercentage", wineDiscountPercentage)
+                    .put("wineRating", allStars.size())
+                    .put("wineCountry", wineCountry)
+                    .put("wineVolume", wineVolume)
+                    .put("wineName", wineName)
+                    .put("wineType", wineType);
 
             wineList.add(jsonString);
         }

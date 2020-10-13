@@ -19,7 +19,7 @@ public class LentaStoreController {
     @Autowired
     private ParserReqService parserReqService;
 
-    @GetMapping("/parser/string")
+    @GetMapping("/parser")
     public String getParserResult(){
         return parserReqService.getJsonList().toString();
     }

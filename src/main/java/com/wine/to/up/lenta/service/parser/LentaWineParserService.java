@@ -3,26 +3,24 @@ package com.wine.to.up.lenta.service.parser;
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @NoArgsConstructor
 public class LentaWineParserService {
 
-    public List<ProductDTO> parseWineList(List<JSONObject> wineList) {
+    public List<ProductDTO> parseWineList(ParserRsp wineList) {
 
         List<ProductDTO> productDTOList = new ArrayList<>();
 
-//        List<JSONObject> productList = wineList.getWineList();
+        JSONArray productList = wineList.getWineList();
 
-
-        for (JSONObject jsonObject : wineList) {
-            productDTOList.add(getProductDTO(jsonObject));
+        for (int i=0; i < productList.length(); i++) {
+            productDTOList.add(getProductDTO(productList.getJSONObject(i)));
         }
         return productDTOList;
     }
