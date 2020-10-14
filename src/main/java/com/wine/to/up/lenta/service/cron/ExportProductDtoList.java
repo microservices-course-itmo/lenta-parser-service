@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 
 @Slf4j
-@PropertySource("classpath:crossroad-site.properties")
 public class ExportProductDtoList {
 
     private static final String SHOP = "https://www.lenta.com";
