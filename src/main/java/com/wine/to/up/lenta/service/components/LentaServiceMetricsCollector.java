@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
  * Prometheus' metrics exposed at /metrics-prometheus
  *
  */
-//TODO create-service: rename
 @Component
 public class LentaServiceMetricsCollector extends CommonMetricsCollector {
 }
