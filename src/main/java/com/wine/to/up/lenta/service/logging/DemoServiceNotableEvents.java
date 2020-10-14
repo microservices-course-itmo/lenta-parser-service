@@ -1,4 +1,4 @@
-package com.wine.to.up.demo.service.logging;
+package com.wine.to.up.lenta.service.logging;
 
 import com.wine.to.up.commonlib.logging.NotableEvent;
 
