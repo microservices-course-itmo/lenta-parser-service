@@ -3,8 +3,7 @@ version: '3'
 
 services:
   service:
-    #TODO create-service: rename
-    image: demo-service:latest
+    image: lenta-parser-service:latest
     ports:
       - 8080:8080
     environment:
