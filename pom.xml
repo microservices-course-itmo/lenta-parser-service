@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!--    TODO create-service: rename artifact-->
     <artifactId>lenta-parser-service</artifactId>
     <!--    "current-version" is used for building image and should not include a "SNAPSHOT" word. -->
     <version>${current-version}-SNAPSHOT</version>
@@ -17,11 +16,12 @@
     </parent>
 
     <properties>
-        <!--        TODO create-service: set version to initial (0.1.0)-->
         <current-version>0.1.0</current-version>
 
         <service.commonlib.version>0.2.1-SNAPSHOT</service.commonlib.version>
         <parser.common.api.version>0.2.0-SNAPSHOT</parser.common.api.version>
+        <org.jsoup.version>1.13.1</org.jsoup.version>
+        <org.json.version>20200518</org.json.version>
     </properties>
 
     <dependencies>
@@ -64,14 +64,14 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.13.1</version>
+            <version>${org.jsoup.version}</version>
         </dependency>
 
         <!-- Json -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20200518</version>
+            <version>${org.json.version}</version>
         </dependency>
 
         <dependency>
@@ -79,86 +79,5 @@
             <artifactId>parser-common-api</artifactId>
             <version>${parser.common.api.version}</version>
         </dependency>
-
     </dependencies>
-
-    <!-- Нужен для пуша jar в репозиторий libs-snapshot-local в jfrog artifactory -->
-<!--    <distributionManagement>-->
-<!--        <snapshotRepository>-->
-<!--            <id>snapshots</id>-->
-<!--            <url>http://artifactory:8081/artifactory/libs-snapshot-local</url>-->
-<!--        </snapshotRepository>-->
-<!--    </distributionManagement>-->
-
-<!--    <build>-->
-<!--        <finalName>${project.artifactId}</finalName>-->
-
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <source>11</source>-->
-<!--                    <target>11</target>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-
-<!--            &lt;!&ndash; Нужен для определения текущей ветки(scmBranch) &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.codehaus.mojo</groupId>-->
-<!--                <artifactId>buildnumber-maven-plugin</artifactId>-->
-<!--                <version>${buildnumber-maven-plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>validate</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>create</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <doCheck>false</doCheck>-->
-<!--                    <doUpdate>false</doUpdate>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
-
-<!--            &lt;!&ndash; Нужен для сборки docker image с тегами, и его пуша в docker registry &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
-<!--                <version>${dockerfile-maven-plugin.version}</version>-->
-
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>org.springframework.boot</groupId>-->
-<!--                        <artifactId>spring-boot-starter-logging</artifactId>-->
-<!--                        <version>${project.parent.version}</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-
-<!--                <configuration>-->
-<!--                    &lt;!&ndash; those 2 properties can be unresolvable locally&ndash;&gt;-->
-<!--                    <repository>${env.DOCKER_REPO_HOST}/${project.artifactId}</repository>-->
-<!--                    <tag>${scmBranch}_${current-version}</tag>-->
-<!--                </configuration>-->
-
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>build and push image</id>-->
-<!--                        <phase>deploy</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
-
 </project>

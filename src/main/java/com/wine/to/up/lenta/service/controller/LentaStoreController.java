@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/lenta")
 @Validated
@@ -19,7 +22,9 @@ public class LentaStoreController {
     private ParserReqService parserReqService;
 
     @GetMapping("/parser")
-    public String getParserResult(){
-        return parserReqService.getJsonList().toString();
+    public List<ParserRsp> getParserResult() {
+        List<ParserRsp> list = new ArrayList<>();
+        list.add(parserReqService.getJsonList());
+        return list;
     }
 }

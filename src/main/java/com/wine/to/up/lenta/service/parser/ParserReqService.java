@@ -54,7 +54,7 @@ public class ParserReqService {
             String wineCountry;
             String wineType = "";
             String wineVolume;
-            String wineName = "";
+            StringBuilder wineName = new StringBuilder();
 
             wineImage = wineImage.replace("?preset=thumbnail\"", "");
             String wineStars = e.select(wineStarsSelector).toString();
@@ -97,10 +97,10 @@ public class ParserReqService {
             }
 
             for (String s : fullName) {
-                wineName += s + " ";
+                wineName.append(s).append(" ");
             }
 
-            wineName = wineName.replace("L", "").replace("DO", "");
+            wineName = new StringBuilder(wineName.toString().replace("L", "").replace("DO", ""));
             wineImage = wineImage.replace("?preset=thumbnail", "");
 
             JSONObject jsonString = new JSONObject()
@@ -112,13 +112,11 @@ public class ParserReqService {
                     .put("wineRating", allStars.size())
                     .put("wineCountry", wineCountry)
                     .put("wineVolume", wineVolume)
-                    .put("wineName", wineName)
+                    .put("wineName", wineName.toString())
                     .put("wineType", wineType);
 
             wineList.add(jsonString);
         }
-
         return wineList;
     }
-
 }

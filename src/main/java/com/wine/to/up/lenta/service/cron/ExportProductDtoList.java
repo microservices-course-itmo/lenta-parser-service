@@ -8,7 +8,6 @@ import com.wine.to.up.lenta.service.parser.LentaWineParserService;
 import com.wine.to.up.lenta.service.parser.ParserReqService;
 import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class ExportProductDtoList {
     }
 
     @Scheduled(cron = "${cron.expression}")
-    public void runCronTask(){
+    public void runCronTask() {
 
         log.info("Job started");
 
@@ -53,8 +52,6 @@ public class ExportProductDtoList {
         kafkaSendMessageService.sendMessage(message);
 
         log.info("Send message to Kafka");
-
-
     }
 
     private UpdateProducts.Product getProtobufProduct(ProductDTO wine) {
