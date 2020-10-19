@@ -72,7 +72,6 @@ public class KafkaConfiguration {
      * @param parserCommonApiProperties class containing the values of the given service's API properties (in this particular case topic name)
      * @param metricsCollector         class encapsulating the logic of the metrics collecting and publishing
      */
-    //TODO create-service: rename to reflect your topic name
     @Bean
     KafkaMessageSender<UpdateProducts.UpdateProductsMessage> lentaTopicKafkaMessageSender(Properties producerProperties,
                                                                                          ParserCommonApiProperties parserCommonApiProperties,
@@ -82,3 +81,4 @@ public class KafkaConfiguration {
 
         return new KafkaMessageSender<>(new KafkaProducer<>(producerProperties), parserCommonApiProperties.getParserWinePositionParsedEvents(), metricsCollector);
     }
+}
