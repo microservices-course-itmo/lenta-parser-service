@@ -74,7 +74,7 @@ public class KafkaConfiguration {
      */
     //TODO create-service: rename to reflect your topic name
     @Bean
-    KafkaMessageSender<UpdateProducts.UpdateProductsMessage> testTopicKafkaMessageSender(Properties producerProperties,
+    KafkaMessageSender<UpdateProducts.UpdateProductsMessage> lentaTopicKafkaMessageSender(Properties producerProperties,
                                                                                          ParserCommonApiProperties parserCommonApiProperties,
                                                                                          LentaServiceMetricsCollector metricsCollector) {
         // set appropriate serializer for value
