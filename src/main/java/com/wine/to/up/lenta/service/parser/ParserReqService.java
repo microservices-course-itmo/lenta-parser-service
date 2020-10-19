@@ -34,10 +34,12 @@ public class ParserReqService {
         Elements wineElements = page.select(wineSelector);
         ParserRsp wineList = new ParserRsp();
 
+        //Pattern type: EN/RU language, wine types
         Pattern wineNamePatternEN = Pattern.compile("\\b[A-Z]+\\b");
         Pattern wineNamePatternRU = Pattern.compile("\\b[А-Я][А-Я0-9]+\\b");
         Pattern wineTypePattern = Pattern.compile("(роз|кра|бел|стол|кр\\.).*?,");
 
+        //Selectors for parsing
         String wineTitleSelector = "div.sku-card-small__head > div.sku-card-small__title";
         String winePriceNormalSelector = "div.sku-prices-block.sku-prices-block--small.sku-card-small__prices > div.sku-prices-block__item.sku-prices-block__item--regular > div.sku-price.sku-price--regular.sku-price--small.sku-prices-block__price";
         String winePriceDiscountSelector = "div.sku-prices-block.sku-prices-block--small.sku-card-small__prices > div.sku-prices-block__item.sku-prices-block__item--primary > div.sku-price.sku-price--primary.sku-price--small.sku-prices-block__price";
@@ -46,6 +48,7 @@ public class ParserReqService {
         String wineStarsSelector = "div.sku-card-small__rating-info > div.rating.sku-card-small__commenter-rating-overview-stars";
 
         for (Element e : wineElements) {
+//          Wine Attributes
             String wineTitle = e.select(wineTitleSelector).text();
             String winePriceNormal = e.select(winePriceNormalSelector).text();
             String winePriceDiscount = e.select(winePriceDiscountSelector).text();
@@ -61,7 +64,7 @@ public class ParserReqService {
             List<String> allStars = new ArrayList<>();
             List<String> fullName = new ArrayList<>();
             String[] wineSplitArray = wineTitle.split("\\,");
-
+//          Getting wine country and volume
             if (wineSplitArray.length > 1) {
                 wineCountry = wineSplitArray[wineSplitArray.length - 2];
                 wineVolume = wineSplitArray[wineSplitArray.length - 1];
@@ -69,25 +72,25 @@ public class ParserReqService {
                 wineCountry = wineSplitArray[wineSplitArray.length - 1];
                 wineVolume = wineSplitArray[0];
             }
-
+//          Getting wine rating
             Matcher wineStarMatch = Pattern.compile(".*?rating__star--active")
                     .matcher(wineStars);
             while (wineStarMatch.find()) {
                 allStars.add(wineStarMatch.group());
             }
-
+//          Getting en wine name
             Matcher wineNameMatchEN = wineNamePatternEN
                     .matcher(wineTitle);
             while (wineNameMatchEN.find()) {
                 fullName.add(wineNameMatchEN.group());
             }
-
+//          Getting en wine type
             Matcher wineTypeMatch = wineTypePattern
                     .matcher(wineTitle);
             while (wineTypeMatch.find()) {
                 wineType = wineTypeMatch.group().replace(",", "");
             }
-
+//          Getting ru wine name
             if (fullName.toString().length() == 2) {
                 Matcher wineNameMatchRU = wineNamePatternRU
                         .matcher(wineTitle);
@@ -99,10 +102,11 @@ public class ParserReqService {
             for (String s : fullName) {
                 wineName.append(s).append(" ");
             }
-
+//          Concatenation of wine name
             wineName = new StringBuilder(wineName.toString().replace("L", "").replace("DO", ""));
             wineImage = wineImage.replace("?preset=thumbnail", "");
 
+//          Converting to json object
             JSONObject jsonString = new JSONObject()
                     .put("wineTitle", wineTitle)
                     .put("wineImage", wineImage)
@@ -114,7 +118,7 @@ public class ParserReqService {
                     .put("wineVolume", wineVolume)
                     .put("wineName", wineName.toString())
                     .put("wineType", wineType);
-
+//          Adding json object
             wineList.add(jsonString);
         }
         return wineList;
