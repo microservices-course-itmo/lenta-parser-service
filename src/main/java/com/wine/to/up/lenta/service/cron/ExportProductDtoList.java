@@ -56,8 +56,6 @@ public class ExportProductDtoList {
         kafkaSendMessageService.sendMessage(message);
 
         log.info("Send message to Kafka");
-
-
     }
 
     private UpdateProducts.Product getProtobufProduct(ProductDTO wine) {
