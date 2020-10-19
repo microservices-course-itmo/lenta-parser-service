@@ -79,6 +79,6 @@ public class KafkaConfiguration {
         // set appropriate serializer for value
         producerProperties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, EventSerializer.class.getName());
 
-        return new KafkaMessageSender<>(new KafkaProducer<>(producerProperties), parserCommonApiProperties.getParserWinePositionParsedEvents(), metricsCollector);
+        return new KafkaMessageSender<>(new KafkaProducer<>(producerProperties), parserCommonApiProperties.getWineParsedEventsTopicName(), metricsCollector);
     }
 }
