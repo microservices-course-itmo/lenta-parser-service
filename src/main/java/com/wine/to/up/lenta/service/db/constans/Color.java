@@ -13,23 +13,21 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum Color {
 
-    RED(0, UpdateProducts.Product.Color.RED,"Красное"),
+    RED(UpdateProducts.Product.Color.RED,"Красное"),
 
-    ROSE(1, UpdateProducts.Product.Color.ROSE, "Розовое"),
+    ROSE(UpdateProducts.Product.Color.ROSE, "Розовое"),
 
-    WHITE(2, UpdateProducts.Product.Color.WHITE, "Белое");
-
-    private final int id;
+    WHITE(UpdateProducts.Product.Color.WHITE, "Белое");
 
     private final UpdateProducts.Product.Color productColor;
 
     private final String color;
 
-    private static final Map<String, Color> R = Arrays.stream(
+    private static final Map<String, Color> COLOR_MAP = Arrays.stream(
             Color.values()).collect(Collectors.toMap(Color::getColor, Function.identity())
     );
 
     public static UpdateProducts.Product.Color resolve(String color) {
-        return R.getOrDefault(color, Color.RED).productColor;
+        return COLOR_MAP.getOrDefault(color, Color.RED).productColor;
     }
 }

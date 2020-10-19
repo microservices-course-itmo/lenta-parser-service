@@ -8,6 +8,8 @@ import com.wine.to.up.lenta.service.parser.LentaWineParserService;
 import com.wine.to.up.lenta.service.parser.ParserReqService;
 import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
@@ -16,9 +18,11 @@ import java.util.stream.Collectors;
 
 
 @Slf4j
+@PropertySource("classpath:lenta-site.properties")
 public class ExportProductDtoList {
 
-    private static final String SHOP = "https://www.lenta.com";
+    @Value("${string.for.cron}")
+    private String SHOP;
 
     private final ParserReqService requestsService;
     private final LentaWineParserService parseService;

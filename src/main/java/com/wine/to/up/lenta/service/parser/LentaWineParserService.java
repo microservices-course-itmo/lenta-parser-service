@@ -13,6 +13,13 @@ import java.util.List;
 @NoArgsConstructor
 public class LentaWineParserService {
 
+    /**
+     * This method convert JSON objects to Java objects "ProductDTO"
+     *
+     * @param wineList - List of JSON objects that parse from site
+     *
+     * @return List of ProductDTO
+     */
     public List<ProductDTO> parseWineList(ParserRsp wineList) {
 
         List<ProductDTO> productDTOList = new ArrayList<>();
@@ -42,28 +49,4 @@ public class LentaWineParserService {
                         .replace(" ", ".")))
                 .build();
     }
-
-
-//        Iterator wine_iterator = wineList.iterator();
-//
-//        FileWriter writer = new FileWriter("file1.txt", true);
-//
-//        while (wine_iterator.hasNext()) {
-//
-//            JSONObject next_wine = (JSONObject) wine_iterator.next();
-//            if (next_wine.has("wineTitle") && !next_wine.getString("wineTitle").isBlank()) {
-//                next_wine.keySet().forEach(keyStr ->
-//                {
-//                    Object keyValue = next_wine.get(keyStr);
-////                    System.out.println("\uD83C\uDF77" + keyStr + " \uD83E\uDD74 " + keyValue);
-//                    try {
-//                        writer.write("\uD83C\uDF77" + keyStr + " \uD83E\uDD74 " + keyValue + "\n");
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
-//                writer.write(next_wine.toString());
-//                System.out.print("\n\n\n");
-//            }
-//        }
 }

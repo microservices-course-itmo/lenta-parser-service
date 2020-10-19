@@ -13,25 +13,23 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum Sugar {
 
-    DRY(0, UpdateProducts.Product.Sugar.DRY,"сухое"),
+    DRY(UpdateProducts.Product.Sugar.DRY,"сухое"),
 
-    MEDIUM_DRY(1, UpdateProducts.Product.Sugar.MEDIUM_DRY, "полусухое"),
+    MEDIUM_DRY(UpdateProducts.Product.Sugar.MEDIUM_DRY, "полусухое"),
 
-    MEDIUM(2, UpdateProducts.Product.Sugar.MEDIUM, "полусладкое"),
+    MEDIUM(UpdateProducts.Product.Sugar.MEDIUM, "полусладкое"),
 
-    SWEET(3, UpdateProducts.Product.Sugar.SWEET, "сладкое");
-
-    private final int id;
+    SWEET(UpdateProducts.Product.Sugar.SWEET, "сладкое");
 
     private final UpdateProducts.Product.Sugar productSugar;
 
     private final String sugar;
 
-    private static final Map<String, Sugar> R = Arrays.stream(
+    private static final Map<String, Sugar> SUGAR_MAP = Arrays.stream(
             Sugar.values()).collect(Collectors.toMap(Sugar::getSugar, Function.identity())
     );
 
     public static UpdateProducts.Product.Sugar resolve(String sugar) {
-        return R.getOrDefault(sugar, Sugar.DRY).productSugar;
+        return SUGAR_MAP.getOrDefault(sugar, Sugar.DRY).productSugar;
     }
 }

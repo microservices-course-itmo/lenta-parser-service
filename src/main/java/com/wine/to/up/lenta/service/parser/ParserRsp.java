@@ -9,6 +9,9 @@ import org.json.JSONObject;
 @NoArgsConstructor
 @Getter
 @Setter
+/**
+ * Wrapper class for JSONArray that contain put method and toString method
+ */
 public class ParserRsp {
 
     private JSONArray wineList = new JSONArray();

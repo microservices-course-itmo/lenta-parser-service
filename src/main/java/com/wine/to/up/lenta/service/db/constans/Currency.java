@@ -12,19 +12,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum Currency {
 
-    UNKNOWN(0, "UNKNOWN"),
+    UNKNOWN("UNKNOWN"),
 
-    RUB(1, "₽");
-
-    private final int id;
+    RUB("₽");
 
     private final String code;
 
-    private static final Map<String, Currency> R = Arrays.stream(
+    private static final Map<String, Currency> CURRENCY_MAP = Arrays.stream(
             Currency.values()).collect(Collectors.toMap(Currency::getCode, Function.identity())
     );
 
     public static Currency resolve(String code) {
-        return R.getOrDefault(code, Currency.UNKNOWN);
+        return CURRENCY_MAP.getOrDefault(code, Currency.UNKNOWN);
     }
 }
