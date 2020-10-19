@@ -19,7 +19,9 @@ public enum Sugar {
 
     MEDIUM(UpdateProducts.Product.Sugar.MEDIUM, "полусладкое"),
 
-    SWEET(UpdateProducts.Product.Sugar.SWEET, "сладкое");
+    SWEET(UpdateProducts.Product.Sugar.SWEET, "сладкое"),
+
+    UNRECOGNIZED(UpdateProducts.Product.Sugar.UNRECOGNIZED, "Unrecognized");
 
     private final UpdateProducts.Product.Sugar productSugar;
 

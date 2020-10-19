@@ -17,7 +17,9 @@ public enum Color {
 
     ROSE(UpdateProducts.Product.Color.ROSE, "Розовое"),
 
-    WHITE(UpdateProducts.Product.Color.WHITE, "Белое");
+    WHITE(UpdateProducts.Product.Color.WHITE, "Белое"),
+
+    UNRECOGNIZED(UpdateProducts.Product.Color.UNRECOGNIZED, "Unrecognized");
 
     private final UpdateProducts.Product.Color productColor;
 
@@ -28,6 +30,6 @@ public enum Color {
     );
 
     public static UpdateProducts.Product.Color resolve(String color) {
-        return COLOR_MAP.getOrDefault(color, Color.RED).productColor;
+        return COLOR_MAP.getOrDefault(color, Color.UNRECOGNIZED).productColor;
     }
 }

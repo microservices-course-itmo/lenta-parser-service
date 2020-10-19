@@ -56,93 +56,34 @@ public class ExportProductDtoList {
         kafkaSendMessageService.sendMessage(message);
 
         log.info("Send message to Kafka");
+
+
     }
 
     private UpdateProducts.Product getProtobufProduct(ProductDTO wine) {
 
-        var builder = UpdateProducts.Product.newBuilder();
-
-        if (wine.getName() != null) {
-            builder.setName(wine.getName());
-        }
-
-        if (wine.getBrand() != null) {
-            builder.setBrand(wine.getBrand());
-        }
-
-        if (wine.getCountry() != null) {
-            builder.setCountry(wine.getCountry());
-        }
-
-        if (wine.getCountry() != null) {
-            builder.setCapacity(wine.getCapacity());
-        }
-
-        if (wine.getCountry() != null) {
-            builder.setStrength(wine.getStrength());
-        }
-
-        if (convertColor(wine.getColor()) != null) {
-            builder.setColor(convertColor(wine.getColor()));
-        }
-
-        if (convertSugar(wine.getSugar()) != null) {
-            builder.setSugar(convertSugar(wine.getSugar()));
-        }
-
-        if (wine.getCountry() != null) {
-            builder.setOldPrice(wine.getOldPrice());
-        }
-
-        if (wine.getImage() != null) {
-            builder.setImage(wine.getImage());
-        }
-
-        if (wine.getCountry() != null) {
-            builder.setDiscount(wine.getDiscount());
-        }
-
-        if (wine.getManufacturer() != null) {
-            builder.setManufacturer(wine.getManufacturer());
-        }
-
-        if (wine.getRegion() != null) {
-            builder.setRegion(wine.getRegion());
-        }
-
-        if (wine.getLink() != null) {
-            builder.setLink(wine.getLink());
-        }
-
-        if (wine.getGrapeSort() != null) {
-            builder.setGrapeSort(wine.getGrapeSort());
-        }
-
-        if (wine.getCountry() != null) {
-            builder.setYear(wine.getYear());
-        }
-
-        if (wine.getDescription() != null) {
-            builder.setDescription(wine.getDescription());
-        }
-
-        if (wine.getGastronomy() != null) {
-            builder.setGastronomy(wine.getGastronomy());
-        }
-
-        if (wine.getTaste() != null) {
-            builder.setTaste(wine.getTaste());
-        }
-
-        if (wine.getFlavor() != null) {
-            builder.setFlavor(wine.getFlavor());
-        }
-
-        if (wine.getCountry() != null) {
-            builder.setRating(wine.getRating());
-        }
-
-        return builder.build();
+        return UpdateProducts.Product.newBuilder().setName(wine.getName())
+                .setName(wine.getName())
+                .setBrand(wine.getBrand())
+                .setCountry(wine.getCountry())
+                .setCapacity(wine.getCapacity())
+                .setStrength(wine.getStrength())
+                .setColor(convertColor(wine.getColor()))
+                .setSugar(convertSugar(wine.getSugar()))
+                .setOldPrice(wine.getOldPrice())
+                .setImage(wine.getImage())
+                .setDiscount(wine.getDiscount())
+                .setManufacturer(wine.getManufacturer())
+                .setRegion(wine.getRegion())
+                .setLink(wine.getLink())
+                .setGrapeSort(wine.getGrapeSort())
+                .setYear(wine.getYear())
+                .setDescription(wine.getDescription())
+                .setGastronomy(wine.getGastronomy())
+                .setTaste(wine.getTaste())
+                .setFlavor(wine.getFlavor())
+                .setRating(wine.getRating())
+                .build();
     }
 
     private UpdateProducts.Product.Sugar convertSugar(String value) {
