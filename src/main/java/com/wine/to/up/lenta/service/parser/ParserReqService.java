@@ -12,5 +12,5 @@ public interface ParserReqService {
      *
      * @return Array of JSONObject
      */
-    public ParserRspImpl getJsonList();
+    ParserRspImpl getJsonList();
 }

@@ -14,19 +14,19 @@ public interface ParserRsp {
      *
      * @param jsonObject - List of JSONObject
      */
-    public void add(JSONObject jsonObject);
+    void add(JSONObject jsonObject);
 
     /**
      * Method that convert List of JSONObject to String
      *
      * @return List of JSONObject that was convert to String
      */
-    public String toString();
+    String toString();
 
     /**
      * Method that return List of JSONObject
      *
      * @return List of JSONObject
      */
-    public List<Object> getJsonList();
+    List<Object> getJsonList();
 }

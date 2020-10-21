@@ -16,5 +16,5 @@ public interface LentaWineParserService {
      * @param wineList - List of JSON objects that parse from site
      * @return List of ProductDTO
      */
-    public List<ProductDTO> parseWineList(ParserRspImpl wineList);
+    List<ProductDTO> parseWineList(ParserRspImpl wineList);
 }
