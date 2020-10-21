@@ -1,5 +1,6 @@
 package com.wine.to.up.lenta.service.db.constans;
 
+import com.wine.to.up.parser.common.api.schema.ParserApi;
 import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,17 +14,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum Sugar {
 
-    DRY(UpdateProducts.Product.Sugar.DRY,"сухое"),
+    DRY(ParserApi.Wine.Sugar.DRY,"сухое"),
 
-    MEDIUM_DRY(UpdateProducts.Product.Sugar.MEDIUM_DRY, "полусухое"),
+    MEDIUM_DRY(ParserApi.Wine.Sugar.MEDIUM_DRY, "полусухое"),
 
-    MEDIUM(UpdateProducts.Product.Sugar.MEDIUM, "полусладкое"),
+    MEDIUM(ParserApi.Wine.Sugar.MEDIUM, "полусладкое"),
 
-    SWEET(UpdateProducts.Product.Sugar.SWEET, "сладкое"),
+    SWEET(ParserApi.Wine.Sugar.SWEET, "сладкое"),
 
-    UNRECOGNIZED(UpdateProducts.Product.Sugar.UNRECOGNIZED, "Unrecognized");
+    UNRECOGNIZED(ParserApi.Wine.Sugar.UNRECOGNIZED, "Unrecognized");
 
-    private final UpdateProducts.Product.Sugar productSugar;
+    private final ParserApi.Wine.Sugar productSugar;
 
     private final String sugar;
 
@@ -31,7 +32,7 @@ public enum Sugar {
             Sugar.values()).collect(Collectors.toMap(Sugar::getSugar, Function.identity())
     );
 
-    public static UpdateProducts.Product.Sugar resolve(String sugar) {
+    public static ParserApi.Wine.Sugar resolve(String sugar) {
         return SUGAR_MAP.getOrDefault(sugar, Sugar.UNRECOGNIZED).productSugar;
     }
 }

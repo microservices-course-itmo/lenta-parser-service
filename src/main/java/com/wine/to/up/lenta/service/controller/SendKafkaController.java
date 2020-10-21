@@ -6,6 +6,7 @@ import com.wine.to.up.lenta.service.db.constans.Sugar;
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
+import com.wine.to.up.parser.common.api.schema.ParserApi;
 import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +27,22 @@ public class SendKafkaController {
     @Autowired
     private  ParserReqServiceImpl requestsService;
     private  LentaWineParserServiceImpl parseService;
-    private  KafkaMessageSender<UpdateProducts.UpdateProductsMessage> kafkaSendMessageService;
+    private  KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService;
 
     @GetMapping("/kafka")
     public void sendKafkaMessage() {
         log.info("Endpoint sendKafkaMessage is starting");
         log.info("Job started");
 
-        List<UpdateProducts.Product> wines = parseService
+        List<ParserApi.Wine> wines = parseService
                 .parseWineList(requestsService.getJsonList())
                 .stream()
                 .map(this::getProtobufProduct)
                 .collect(Collectors.toList());
 
-        UpdateProducts.UpdateProductsMessage message = UpdateProducts.UpdateProductsMessage.newBuilder()
+        ParserApi.WineParsedEvent message = ParserApi.WineParsedEvent.newBuilder()
                 .setShopLink("https://www.lenta.com")
-                .addAllProducts(wines)
+                .addAllWines(wines)
                 .build();
 
         log.info("Parsed: {} wines", wines.size());
@@ -51,8 +52,8 @@ public class SendKafkaController {
         log.info("Send message to Kafka");
     }
 
-    private UpdateProducts.Product getProtobufProduct(ProductDTO wine) {
-        return UpdateProducts.Product.newBuilder().setName(wine.getName())
+    private ParserApi.Wine getProtobufProduct(ProductDTO wine) {
+        return ParserApi.Wine.newBuilder()
                 .setName(wine.getName())
                 .setBrand(wine.getBrand())
                 .setCountry(wine.getCountry())
@@ -73,11 +74,11 @@ public class SendKafkaController {
                 .build();
     }
 
-    private UpdateProducts.Product.Sugar convertSugar(String value) {
+    private ParserApi.Wine.Sugar convertSugar(String value) {
         return Sugar.resolve(value);
     }
 
-    private UpdateProducts.Product.Color convertColor(String value) {
+    private ParserApi.Wine.Color convertColor(String value) {
         return Color.resolve(value);
     }
 

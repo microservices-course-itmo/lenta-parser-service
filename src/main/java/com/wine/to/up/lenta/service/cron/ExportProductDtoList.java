@@ -6,6 +6,7 @@ import com.wine.to.up.lenta.service.db.constans.Sugar;
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
+import com.wine.to.up.parser.common.api.schema.ParserApi;
 import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +27,10 @@ public class ExportProductDtoList {
 
     private final ParserReqServiceImpl requestsService;
     private final LentaWineParserServiceImpl parseService;
-    private final KafkaMessageSender<UpdateProducts.UpdateProductsMessage> kafkaSendMessageService;
+    private final KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService;
 
     public ExportProductDtoList(ParserReqServiceImpl requestsService, LentaWineParserServiceImpl parseService,
-                                KafkaMessageSender<UpdateProducts.UpdateProductsMessage> kafkaSendMessageService) {
+                                KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService) {
         this.requestsService = Objects.requireNonNull(requestsService, "Can't get requestsService");
         this.parseService = Objects.requireNonNull(parseService, "Can't get parseService");
         this.kafkaSendMessageService = Objects.requireNonNull(kafkaSendMessageService, "Can't get kafkaSendMessageService");
@@ -40,15 +41,15 @@ public class ExportProductDtoList {
 
         log.info("Job started");
 
-        List<UpdateProducts.Product> wines = parseService
+        List<ParserApi.Wine> wines = parseService
                 .parseWineList(requestsService.getJsonList())
                 .stream()
                 .map(this::getProtobufProduct)
                 .collect(Collectors.toList());
 
-        UpdateProducts.UpdateProductsMessage message = UpdateProducts.UpdateProductsMessage.newBuilder()
+        ParserApi.WineParsedEvent message = ParserApi.WineParsedEvent.newBuilder()
                 .setShopLink(SHOP)
-                .addAllProducts(wines)
+                .addAllWines(wines)
                 .build();
 
         log.info("Parsed: {} wines", wines.size());
@@ -58,9 +59,9 @@ public class ExportProductDtoList {
         log.info("Send message to Kafka");
     }
 
-    private UpdateProducts.Product getProtobufProduct(ProductDTO wine) {
+    private ParserApi.Wine getProtobufProduct(ProductDTO wine) {
 
-        return UpdateProducts.Product.newBuilder().setName(wine.getName())
+        return ParserApi.Wine.newBuilder()
                 .setName(wine.getName())
                 .setBrand(wine.getBrand())
                 .setCountry(wine.getCountry())
@@ -81,11 +82,11 @@ public class ExportProductDtoList {
                 .build();
     }
 
-    private UpdateProducts.Product.Sugar convertSugar(String value) {
+    private ParserApi.Wine.Sugar convertSugar(String value) {
         return Sugar.resolve(value);
     }
 
-    private UpdateProducts.Product.Color convertColor(String value) {
+    private ParserApi.Wine.Color convertColor(String value) {
         return Color.resolve(value);
     }
 }
