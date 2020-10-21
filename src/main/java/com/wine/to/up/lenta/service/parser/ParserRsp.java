@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -23,4 +25,8 @@ public class ParserRsp {
     public String toString() {
         return wineList.toString();
     }
+
+    public List<Object> getJsonList(){
+        return wineList.toList();
+    };
 }
