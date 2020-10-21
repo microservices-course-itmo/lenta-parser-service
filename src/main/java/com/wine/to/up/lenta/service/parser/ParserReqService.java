@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -26,10 +27,15 @@ public class ParserReqService {
 
     private final String userAgent;
 
-    @SneakyThrows
+
     public ParserRsp getJsonList() {
 
-        Document page = Jsoup.connect(baseUrl).userAgent(userAgent).get();
+        Document page = null;
+        try {
+            page = Jsoup.connect(baseUrl).userAgent(userAgent).get();
+        } catch (IOException e) {
+            log.error("Getting IOException: ", e);
+        }
         String wineSelector = "div.catalog-grid-container.catalog-page__grid > div > div > a";
         Elements wineElements = page.select(wineSelector);
         ParserRsp wineList = new ParserRsp();

@@ -32,6 +32,6 @@ public enum Sugar {
     );
 
     public static UpdateProducts.Product.Sugar resolve(String sugar) {
-        return SUGAR_MAP.getOrDefault(sugar, Sugar.DRY).productSugar;
+        return SUGAR_MAP.getOrDefault(sugar, Sugar.UNRECOGNIZED).productSugar;
     }
 }
