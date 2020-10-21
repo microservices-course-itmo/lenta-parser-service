@@ -1,4 +1,4 @@
-package com.wine.to.up.lenta.service.cron;
+package com.wine.to.up.lenta.service.controller;
 
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.lenta.service.db.constans.Color;
@@ -8,36 +8,29 @@ import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
 import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-
+@RestController
+@RequestMapping("/lenta")
+@Validated
 @Slf4j
-@PropertySource("classpath:lenta-site.properties")
-public class ExportProductDtoList {
+public class SendKafkaController {
 
-    @Value("${string.for.cron}")
-    private String SHOP;
+    @Autowired
+    private  ParserReqServiceImpl requestsService;
+    private  LentaWineParserServiceImpl parseService;
+    private  KafkaMessageSender<UpdateProducts.UpdateProductsMessage> kafkaSendMessageService;
 
-    private final ParserReqServiceImpl requestsService;
-    private final LentaWineParserServiceImpl parseService;
-    private final KafkaMessageSender<UpdateProducts.UpdateProductsMessage> kafkaSendMessageService;
-
-    public ExportProductDtoList(ParserReqServiceImpl requestsService, LentaWineParserServiceImpl parseService,
-                                KafkaMessageSender<UpdateProducts.UpdateProductsMessage> kafkaSendMessageService) {
-        this.requestsService = Objects.requireNonNull(requestsService, "Can't get requestsService");
-        this.parseService = Objects.requireNonNull(parseService, "Can't get parseService");
-        this.kafkaSendMessageService = Objects.requireNonNull(kafkaSendMessageService, "Can't get kafkaSendMessageService");
-    }
-
-    @Scheduled(cron = "${cron.expression}")
-    public void runCronTask() {
-
+    @GetMapping("/kafka")
+    public void sendKafkaMessage() {
+        log.info("Endpoint sendKafkaMessage is starting");
         log.info("Job started");
 
         List<UpdateProducts.Product> wines = parseService
@@ -47,7 +40,7 @@ public class ExportProductDtoList {
                 .collect(Collectors.toList());
 
         UpdateProducts.UpdateProductsMessage message = UpdateProducts.UpdateProductsMessage.newBuilder()
-                .setShopLink(SHOP)
+                .setShopLink("https://www.lenta.com")
                 .addAllProducts(wines)
                 .build();
 
@@ -59,7 +52,6 @@ public class ExportProductDtoList {
     }
 
     private UpdateProducts.Product getProtobufProduct(ProductDTO wine) {
-
         return UpdateProducts.Product.newBuilder().setName(wine.getName())
                 .setName(wine.getName())
                 .setBrand(wine.getBrand())
@@ -88,4 +80,5 @@ public class ExportProductDtoList {
     private UpdateProducts.Product.Color convertColor(String value) {
         return Color.resolve(value);
     }
+
 }

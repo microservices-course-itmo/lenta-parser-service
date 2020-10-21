@@ -1,7 +1,7 @@
 package com.wine.to.up.lenta.service.controller;
 
-import com.wine.to.up.lenta.service.parser.ParserReqService;
-import com.wine.to.up.lenta.service.parser.ParserRsp;
+import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
+import com.wine.to.up.lenta.service.parser.impl.ParserRspImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -19,12 +19,13 @@ import java.util.List;
 public class LentaStoreController {
 
     @Autowired
-    private ParserReqService parserReqService;
+    private ParserReqServiceImpl parserReqServiceImpl;
 
     @GetMapping("/parser")
-    public List<ParserRsp> getParserResult() {
-        List<ParserRsp> list = new ArrayList<>();
-        list.add(parserReqService.getJsonList());
+    public List<ParserRspImpl> getParserResult() {
+        log.info("Endpoint getParserResult is starting");
+        List<ParserRspImpl> list = new ArrayList<>();
+        list.add(parserReqServiceImpl.getJsonList());
         return list;
     }
 }
