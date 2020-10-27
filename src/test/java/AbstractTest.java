@@ -1,5 +1,3 @@
-package test;
-
 import com.wine.to.up.lenta.service.ServiceApplication;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

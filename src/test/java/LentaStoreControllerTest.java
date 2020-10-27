@@ -1,13 +1,12 @@
-package test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LentaStoreControllerTest extends AbstractTest {
     @Override
