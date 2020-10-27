@@ -83,7 +83,9 @@ public class SendKafkaController {
 //        if (sugar != null) {
 //            builder.setSugar(sugar);
 //        }
-        builder.setOldPrice(wine.getOldPrice());
+        if (wine.getOldPrice() != null) {
+            builder.setOldPrice(wine.getOldPrice());
+        }
         if (wine.getImage() != null) {
             builder.setImage(wine.getImage());
         }

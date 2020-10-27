@@ -32,13 +32,6 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
                 .country(jsonObject.getString("wineCountry"))
                 .image(jsonObject.getString("wineImage"))
                 .rating(jsonObject.get("wineRating").equals("") ? 0.0f : jsonObject.getInt("wineRating"))
-                .newPrice(Float.parseFloat(jsonObject.getString("winePriceDiscount")
-                        .replace(" ₽", "")
-                        .replace(" ", ".")))
-                .oldPrice(Float.parseFloat(jsonObject.getString("winePriceNormal")
-                        .replace(" ₽", "")
-                        .replace("1 ", "1")
-                        .replace(" ", ".")))
                 .build();
     }
 }
