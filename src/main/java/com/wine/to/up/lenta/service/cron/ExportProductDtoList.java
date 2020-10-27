@@ -60,26 +60,65 @@ public class ExportProductDtoList {
     }
 
     private ParserApi.Wine getProtobufProduct(ProductDTO wine) {
+        ParserApi.Wine.Sugar sugar = convertSugar(wine.getSugar());
+        ParserApi.Wine.Color color = convertColor(wine.getColor());
 
-        return ParserApi.Wine.newBuilder()
-                .setName(wine.getName())
-                .setBrand(wine.getBrand())
-                .setCountry(wine.getCountry())
-                .setCapacity(wine.getCapacity())
-                .setStrength(wine.getStrength())
-                .setColor(convertColor(wine.getColor()))
-                .setSugar(convertSugar(wine.getSugar()))
-                .setOldPrice(wine.getOldPrice())
-                .setImage(wine.getImage())
-                .setManufacturer(wine.getManufacturer())
-                .setLink(wine.getLink())
-                .setYear(wine.getYear())
-                .setDescription(wine.getDescription())
-                .setGastronomy(wine.getGastronomy())
-                .setTaste(wine.getTaste())
-                .setFlavor(wine.getFlavor())
-                .setRating(wine.getRating())
-                .build();
+        var builder = ParserApi.Wine.newBuilder();
+
+        if (wine.getName() != null) {
+            builder.setName(wine.getName());
+        }
+        if (wine.getBrand() != null) {
+            builder.setBrand(wine.getBrand());
+        }
+        if (wine.getCountry() != null) {
+            builder.setCountry(wine.getCountry());
+        }
+        if (wine.getCapacity() != null) {
+            builder.setCapacity(wine.getCapacity());
+        }
+        if (wine.getStrength() != null) {
+            builder.setStrength(wine.getStrength());
+        }
+//        if (color != null) {
+//            builder.setColor(color);
+//        }
+//        if (sugar != null) {
+//            builder.setSugar(sugar);
+//        }
+        builder.setOldPrice(wine.getOldPrice());
+        if (wine.getImage() != null) {
+            builder.setImage(wine.getImage());
+        }
+        if (wine.getManufacturer() != null) {
+            builder.setManufacturer(wine.getManufacturer());
+        }
+        if (wine.getRegion() != null) {
+            builder.addAllRegion(wine.getRegion());
+        }
+        if (wine.getLink() != null) {
+            builder.setLink(wine.getLink());
+        }
+        if (wine.getGrapeSort() != null) {
+            builder.addAllGrapeSort(wine.getGrapeSort());
+        }
+        if (wine.getYear() != null) {
+            builder.setYear(wine.getYear());
+        }
+        if (wine.getDescription() != null) {
+            builder.setDescription(wine.getDescription());
+        }
+        if (wine.getGastronomy() != null) {
+            builder.setGastronomy(wine.getGastronomy());
+        }
+        if (wine.getTaste() != null) {
+            builder.setTaste(wine.getTaste());
+        }
+        if (wine.getFlavor() != null) {
+            builder.setFlavor(wine.getFlavor());
+        }
+        builder.setRating(wine.getRating());
+        return builder.build();
     }
 
     private ParserApi.Wine.Sugar convertSugar(String value) {
