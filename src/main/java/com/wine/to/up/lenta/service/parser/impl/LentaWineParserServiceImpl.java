@@ -28,10 +28,19 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
 
     private ProductDTO getProductDTO(JSONObject jsonObject) {
         return ProductDTO.builder()
-                .brand(jsonObject.getString("wineName"))
+                .brand(jsonObject.getString("wineBrand"))
                 .country(jsonObject.getString("wineCountry"))
-                .image(jsonObject.getString("wineImage"))
-                .rating(jsonObject.get("wineRating").equals("") ? 0.0f : jsonObject.getInt("wineRating"))
+                .flavor(jsonObject.getString("wineAroma"))
+                .sugar(jsonObject.getString("wineSugarContent"))
+                .color(jsonObject.getString("wineColour"))
+                .gastronomy(jsonObject.getString("wineGastronomy"))
+                .strength(jsonObject.getFloat("wineGastronomy"))
+                .taste(jsonObject.getString("wineTaste"))
+                .manufacturer(jsonObject.getString("winePackagingType"))
+                .image(jsonObject.getString("imageUrl"))
+                .oldPrice(jsonObject.getFloat("wineOldPrice"))
+                .newPrice(jsonObject.getFloat("wineNewPrice"))
+                .rating(jsonObject.getFloat("wineRating"))
                 .build();
     }
 }
