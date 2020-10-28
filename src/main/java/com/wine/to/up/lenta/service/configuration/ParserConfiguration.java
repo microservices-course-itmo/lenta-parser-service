@@ -17,9 +17,12 @@ public class ParserConfiguration {
     @Value("${site.user.agent}")
     private String userAgent;
 
+    @Value("${site.rest.url}")
+    private String apiUrl;
+
     @Bean
     public ParserReqServiceImpl parserReqService(){
-        return new ParserReqServiceImpl(url, userAgent);
+        return new ParserReqServiceImpl(url, userAgent, apiUrl);
     }
 
     @Bean
