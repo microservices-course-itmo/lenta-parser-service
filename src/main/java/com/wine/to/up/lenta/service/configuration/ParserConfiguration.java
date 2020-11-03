@@ -14,15 +14,15 @@ public class ParserConfiguration {
     @Value("${site.base.url}")
     private String url;
 
-    @Value("${site.user.agent}")
-    private String userAgent;
-
     @Value("${site.rest.url}")
     private String apiUrl;
 
+    @Value("${site.rest.body}")
+    private String apiBody;
+
     @Bean
     public ParserReqServiceImpl parserReqService(){
-        return new ParserReqServiceImpl(url, userAgent, apiUrl);
+        return new ParserReqServiceImpl(url, apiUrl, apiBody);
     }
 
     @Bean
