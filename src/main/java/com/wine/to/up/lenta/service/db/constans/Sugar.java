@@ -14,15 +14,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum Sugar {
 
-    DRY(ParserApi.Wine.Sugar.DRY,"сухое"),
+    DRY(ParserApi.Wine.Sugar.DRY,"Сухое"),
 
-    MEDIUM_DRY(ParserApi.Wine.Sugar.MEDIUM_DRY, "полусухое"),
+    MEDIUM_DRY(ParserApi.Wine.Sugar.MEDIUM_DRY, "Полусухое"),
 
-    MEDIUM(ParserApi.Wine.Sugar.MEDIUM, "полусладкое"),
+    MEDIUM(ParserApi.Wine.Sugar.MEDIUM, "Полусладкое"),
 
-    SWEET(ParserApi.Wine.Sugar.SWEET, "сладкое"),
-
-    UNRECOGNIZED(ParserApi.Wine.Sugar.UNRECOGNIZED, "Unrecognized");
+    SWEET(ParserApi.Wine.Sugar.SWEET, "Сладкое");
 
     private final ParserApi.Wine.Sugar productSugar;
 
@@ -33,6 +31,6 @@ public enum Sugar {
     );
 
     public static ParserApi.Wine.Sugar resolve(String sugar) {
-        return SUGAR_MAP.getOrDefault(sugar, Sugar.UNRECOGNIZED).productSugar;
+        return SUGAR_MAP.getOrDefault(sugar, Sugar.DRY).productSugar;
     }
 }

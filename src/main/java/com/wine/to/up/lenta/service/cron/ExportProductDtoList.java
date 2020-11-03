@@ -65,9 +65,6 @@ public class ExportProductDtoList {
 
         var builder = ParserApi.Wine.newBuilder();
 
-        if (wine.getName() != null) {
-            builder.setName(wine.getName());
-        }
         if (wine.getBrand() != null) {
             builder.setBrand(wine.getBrand());
         }
@@ -80,12 +77,12 @@ public class ExportProductDtoList {
         if (wine.getStrength() != null) {
             builder.setStrength(wine.getStrength());
         }
-//        if (color != null) {
-//            builder.setColor(color);
-//        }
-//        if (sugar != null) {
-//            builder.setSugar(sugar);
-//        }
+        if (color != null) {
+            builder.setColor(color);
+        }
+        if (sugar != null) {
+            builder.setSugar(sugar);
+        }
         if (wine.getOldPrice() != null) {
             builder.setOldPrice(wine.getOldPrice());
         }
@@ -95,20 +92,11 @@ public class ExportProductDtoList {
         if (wine.getManufacturer() != null) {
             builder.setManufacturer(wine.getManufacturer());
         }
-        if (wine.getRegion() != null) {
-            builder.addAllRegion(wine.getRegion());
-        }
         if (wine.getLink() != null) {
             builder.setLink(wine.getLink());
         }
         if (wine.getGrapeSort() != null) {
             builder.addAllGrapeSort(wine.getGrapeSort());
-        }
-        if (wine.getYear() != null) {
-            builder.setYear(wine.getYear());
-        }
-        if (wine.getDescription() != null) {
-            builder.setDescription(wine.getDescription());
         }
         if (wine.getGastronomy() != null) {
             builder.setGastronomy(wine.getGastronomy());

@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -19,7 +20,6 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         List<ProductDTO> productDTOList = new ArrayList<>();
 
         JSONArray productList = wineList.getWineList();
-
         for (int i = 0; i < productList.length(); i++) {
             productDTOList.add(getProductDTO(productList.getJSONObject(i)));
         }
@@ -27,20 +27,46 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
     }
 
     private ProductDTO getProductDTO(JSONObject jsonObject) {
-        return ProductDTO.builder()
-                .brand(jsonObject.getString("wineBrand"))
-                .country(jsonObject.getString("wineCountry"))
-                .flavor(jsonObject.getString("wineAroma"))
-                .sugar(jsonObject.getString("wineSugarContent"))
-                .color(jsonObject.getString("wineColour"))
-                .gastronomy(jsonObject.getString("wineGastronomy"))
-                .strength(jsonObject.getFloat("wineGastronomy"))
-                .taste(jsonObject.getString("wineTaste"))
-                .manufacturer(jsonObject.getString("winePackagingType"))
-                .image(jsonObject.getString("imageUrl"))
-                .oldPrice(jsonObject.getFloat("wineOldPrice"))
-                .newPrice(jsonObject.getFloat("wineNewPrice"))
-                .rating(jsonObject.getFloat("wineRating"))
-                .build();
+        ProductDTO.ProductDTOBuilder productBuilder = ProductDTO.builder();
+
+        productBuilder.oldPrice(jsonObject.getFloat("wineOldPrice"));
+        productBuilder.newPrice(jsonObject.getFloat("wineNewPrice"));
+        productBuilder.image(jsonObject.getString("imageUrl"));
+        productBuilder.rating(jsonObject.getFloat("wineRating"));
+        productBuilder.link(jsonObject.getString("wineLink"));
+
+        if (jsonObject.has("wineBrand")) {
+            productBuilder.brand(jsonObject.getString("wineBrand"));
+        }
+        if (jsonObject.has("wineCountry")) {
+            productBuilder.country(jsonObject.getString("wineCountry"));
+        }
+        if (jsonObject.has("wineAroma")) {
+            productBuilder.flavor(jsonObject.getString("wineAroma"));
+        }
+        if (jsonObject.has("wineSugarContent")) {
+            productBuilder.sugar(jsonObject.getString("wineSugarContent"));
+        }
+        if (jsonObject.has("wineColour")) {
+            productBuilder.color(jsonObject.getString("wineColour"));
+        }
+        if (jsonObject.has("wineGastronomy")) {
+            productBuilder.gastronomy(jsonObject.getString("wineGastronomy"));
+        }
+        if (jsonObject.has("wineStrength")) {
+            productBuilder.strength(jsonObject.getFloat("wineStrength"));
+        }
+        if (jsonObject.has("wineTaste")) {
+            productBuilder.taste(jsonObject.getString("wineTaste"));
+        }
+        if (jsonObject.has("winePackagingType")) {
+            productBuilder.manufacturer(jsonObject.getString("winePackagingType"));
+        }
+        if (jsonObject.has("wineGrapeSort")) {
+            productBuilder.grapeSort(Arrays.asList(jsonObject.getString("wineGrapeSort").split(", ")));
+        }
+        productBuilder.capacity(jsonObject.getFloat("wineCapacity"));
+
+        return productBuilder.build();
     }
 }

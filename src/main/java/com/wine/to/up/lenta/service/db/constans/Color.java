@@ -14,13 +14,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public enum Color {
 
-    RED(ParserApi.Wine.Color.RED,"Красное"),
+    RED(ParserApi.Wine.Color.RED,"Красный"),
 
-    ROSE(ParserApi.Wine.Color.ROSE, "Розовое"),
+    ROSE(ParserApi.Wine.Color.ROSE, "Розовый"),
 
-    WHITE(ParserApi.Wine.Color.WHITE, "Белое"),
-
-    UNRECOGNIZED(ParserApi.Wine.Color.UNRECOGNIZED, "Unrecognized");
+    WHITE(ParserApi.Wine.Color.WHITE, "Белый");
 
     private final ParserApi.Wine.Color productColor;
 
@@ -31,6 +29,6 @@ public enum Color {
     );
 
     public static ParserApi.Wine.Color resolve(String color) {
-        return COLOR_MAP.getOrDefault(color, Color.UNRECOGNIZED).productColor;
+        return COLOR_MAP.getOrDefault(color, Color.RED).productColor;
     }
 }
