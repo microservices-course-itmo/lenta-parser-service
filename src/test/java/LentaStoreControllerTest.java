@@ -17,14 +17,10 @@ public class LentaStoreControllerTest extends AbstractTest {
     //GET API test
     @Test
     public void getProductsList() throws Exception {
-        String uri = "/lenta/parser";
+        String uri = "/lenta";
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         assertEquals(200, status);
-        String content = mvcResult.getResponse().getContentAsString();
-        content = content.substring(1, content.length());
-        JSONObject productlist = new JSONObject(content);
-        assertTrue(productlist.length()> 0);
     }
 }

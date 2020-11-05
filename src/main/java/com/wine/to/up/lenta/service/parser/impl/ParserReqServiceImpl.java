@@ -28,7 +28,7 @@ import java.util.List;
 @Setter
 public class ParserReqServiceImpl implements ParserReqService {
 
-    private final String baseUrl;
+    private String baseUrl;
 
     private final String apiUrl;
 
@@ -46,10 +46,19 @@ public class ParserReqServiceImpl implements ParserReqService {
     private static final String TASTE = "Вкус";
     private static final String MANUFACTURER = "Вид упаковки";
 
+
+    public ParserReqServiceImpl changeToLocal(){
+        this.baseUrl = "";
+        return this;
+    }
+    public ParserReqServiceImpl changeToOnline(){
+        this.baseUrl = "https://lenta.com";
+        return this;
+    }
     @SneakyThrows
     public ParserRspImpl getJsonList() {
 
-        System.setProperty("webdriver.chrome.driver", "/Users/kosch71/Downloads/lenta-parser-service/src/main/resources/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/Lessons/Java/lenta-parser-service/src/main/resources/chromedriver.exe");
 
         HttpClient client = HttpClient.newBuilder().build();
         ChromeOptions options = new ChromeOptions();
@@ -92,7 +101,7 @@ public class ParserReqServiceImpl implements ParserReqService {
         return wineList;
     }
 
-    private JSONObject getProperties(WebDriver driver, JSONObject jsonString, JSONArray array, int i){
+    public JSONObject getProperties(WebDriver driver, JSONObject jsonString, JSONArray array, int i){
         driver.get(baseUrl + array.getJSONObject(i).getString("skuUrl"));
         String htmlContent = driver.getPageSource();
         Document document = Jsoup.parse(htmlContent);
