@@ -1,12 +1,10 @@
 package com.wine.to.up.lenta.service.configuration;
 
-import com.wine.to.up.commonlib.messaging.KafkaMessageHandler;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 import com.wine.to.up.lenta.service.components.LentaServiceMetricsCollector;
 import com.wine.to.up.lenta.service.messaging.serialization.EventSerializer;
 import com.wine.to.up.parser.common.api.ParserCommonApiProperties;
 import com.wine.to.up.parser.common.api.schema.ParserApi;
-import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.clients.producer.KafkaProducer;
