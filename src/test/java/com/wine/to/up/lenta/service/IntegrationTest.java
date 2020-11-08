@@ -22,21 +22,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IntegrationTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
     private LentaStoreController lentaStoreController;
 
     @Autowired
     private SendKafkaController sendKafkaController;
 
     @Test
-    public void test1() throws Exception {
+    public void lentaStoreIntegrationTest() {
         assertThat(lentaStoreController).isNotNull();
     }
 
     @Test
-    public void test2() throws Exception {
+    public void kafkaIntegrationTest() {
         assertThat(sendKafkaController).isNotNull();
     }
 

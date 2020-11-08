@@ -7,7 +7,6 @@ import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
 import com.wine.to.up.parser.common.api.schema.ParserApi;
-import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -107,7 +106,9 @@ public class ExportProductDtoList {
         if (wine.getFlavor() != null) {
             builder.setFlavor(wine.getFlavor());
         }
-        builder.setRating(wine.getRating());
+        if (wine.getRating() != null) {
+            builder.setRating(wine.getRating());
+        }
         return builder.build();
     }
 

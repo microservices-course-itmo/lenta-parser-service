@@ -1,3 +1,5 @@
+package com.wine.to.up.lenta.service.controller;
+
 import com.wine.to.up.lenta.service.ServiceApplication;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,7 +13,7 @@ import java.util.List;
 @ToString
 public class ProductDTO {
 
-    private String name;
+//    private String name;
     private Float oldPrice;
     private Float newPrice;
     private String link;
@@ -21,17 +21,13 @@ public class ProductDTO {
     private String manufacturer;
     private String brand;
     private String country;
-    private List<String> region;
     private Float capacity;
     private Float strength;
     private String color;
     private String sugar;
     private List<String> grapeSort;
-    private Integer year;
-    private String description;
     private String gastronomy;
     private String taste;
     private String flavor;
     private Float rating;
-    private boolean sparkling;
 }
