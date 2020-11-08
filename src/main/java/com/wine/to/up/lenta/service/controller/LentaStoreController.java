@@ -18,10 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class LentaStoreController {
 
-    private final ParserReqServiceImpl parserReqServiceImpl;
+    private ParserReqServiceImpl parserReqServiceImpl;
 
     @GetMapping(name = "/parser", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getParserResult() {
-        return new ResponseEntity<>(parserReqServiceImpl.getJsonList().getWineList().toList(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(parserReqServiceImpl.getJsonList().getWineList().toList(), HttpStatus.OK);
+        } catch (Exception e){
+            log.error("Ex:", e);
+        }
+        return null;
     }
 }

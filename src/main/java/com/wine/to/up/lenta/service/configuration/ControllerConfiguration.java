@@ -1,20 +1,34 @@
 package com.wine.to.up.lenta.service.configuration;
 
-import com.wine.to.up.lenta.service.controller.LentaStoreController;
-import com.wine.to.up.lenta.service.controller.SendKafkaController;
-import com.wine.to.up.lenta.service.cron.ExportProductDtoList;
-import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
+@Configuration
 public class ControllerConfiguration {
 
+    /**
+     * Set Timeout for HTTP requests
+     * @return
+     */
     @Bean
-    public LentaStoreController lentaStoreController(ParserReqServiceImpl parserReqServiceImpl) {
-        return new LentaStoreController(parserReqServiceImpl);
+    public ClientHttpRequestFactory getClientHttpRequestFactory() {
+        int timeout = 1200000; // here is the timeout property set for rest template
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory
+                = new HttpComponentsClientHttpRequestFactory();
+        clientHttpRequestFactory.setConnectTimeout(timeout);
+        return clientHttpRequestFactory;
     }
 
+    /**
+     * RestTemplate to call REST endpoints
+     * @param clientHttpRequestFactory
+     * @return
+     */
     @Bean
-    public SendKafkaController sendKafkaController(ExportProductDtoList exportProductDtoList){
-        return new SendKafkaController(exportProductDtoList);
+    public RestTemplate getRestTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
+        return new RestTemplate(clientHttpRequestFactory);
     }
 }

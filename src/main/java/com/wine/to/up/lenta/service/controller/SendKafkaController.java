@@ -15,10 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class SendKafkaController {
 
-    private final ExportProductDtoList exportProductDtoList;
+    private ExportProductDtoList exportProductDtoList;
 
     @GetMapping("/kafka")
     public void sendKafkaMessage() {
-        exportProductDtoList.runCronTask();
+        try {
+            exportProductDtoList.runCronTask();
+        } catch (Exception e){
+            log.error("Ex:", e);
+        }
     }
 }

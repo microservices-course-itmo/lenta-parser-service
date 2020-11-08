@@ -17,7 +17,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @AllArgsConstructor
@@ -55,7 +58,8 @@ public class ParserReqServiceImpl implements ParserReqService {
 
     public ParserRspImpl getJsonList() {
 
-        HttpClient client = HttpClient.newBuilder().build();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
@@ -68,6 +72,8 @@ public class ParserReqServiceImpl implements ParserReqService {
         HttpResponse<?> response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            executor.shutdownNow();
+            System.gc();
         } catch (Exception e) {
            log.error("Bad request: `%s` \n; Catch exception: `%s`",response.statusCode(), e);
            return null;
@@ -80,7 +86,12 @@ public class ParserReqServiceImpl implements ParserReqService {
             for (int i = 0; i < array.length(); i++) {
                 Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                 Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
-                String imageUrl = array.getJSONObject(i).getString("imageUrl");
+                String imageUrl = null;
+
+                if (array.getJSONObject(i).has("imageUrl")) {
+                    imageUrl = String.valueOf(array.getJSONObject(i).get("imageUrl"));
+                }
+
                 Double rating = array.getJSONObject(i).getDouble("averageRating");
 
                 JSONObject jsonString = new JSONObject()
@@ -106,9 +117,9 @@ public class ParserReqServiceImpl implements ParserReqService {
         try {
             document = Jsoup.connect(String.valueOf(productHtml))
                     .header("Accept-Encoding", "gzip, deflate")
-                    .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0")
+                    .userAgent("Opera")
                     .maxBodySize(0)
-                    .timeout(600000)
+                    .timeout(30000)
                     .get();
         } catch (IOException e) {
             log.error("Can't parse wine characteristics", e);
@@ -160,8 +171,15 @@ public class ParserReqServiceImpl implements ParserReqService {
                         jsonString.put("winePackagingType", value.text());
                         break;
                 }
+
             }
         }
         return jsonString;
+    }
+
+    public static void main(String[] args){
+        ParserReqServiceImpl parserReqService = new ParserReqServiceImpl("https://lenta.com", "https://lenta.com/api/v1/skus/list", "{\"nodeCode\":\"ca36224e8c82be1181aad8835310555bf\",\"filters\":[],\"tag\":\"\",\"typeSearch\":1,\"sortingType\":\"ByPriority\",\"offset\":0,\"limit\":\"750\",\"updateFilters\":true}");
+
+        System.out.println(parserReqService.getJsonList().getWineList().length());
     }
 }
