@@ -19,7 +19,7 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
 
         List<ProductDTO> productDTOList = new ArrayList<>();
 
-        JSONArray productList = wineList.getWineList();
+        JSONArray productList = wineList.getWines();
         for (int i = 0; i < productList.length(); i++) {
             productDTOList.add(getProductDTO(productList.getJSONObject(i)));
         }
@@ -65,6 +65,9 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         if (jsonObject.has("wineStrength")) {
             productBuilder.strength(jsonObject.getFloat("wineStrength"));
         }
+        if (jsonObject.has("wineSparkling")){
+            productBuilder.sparkling(true);
+        }
         if (jsonObject.has("wineTaste")) {
             productBuilder.taste(jsonObject.getString("wineTaste"));
         }
@@ -74,7 +77,13 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         if (jsonObject.has("wineGrapeSort")) {
             productBuilder.grapeSort(Arrays.asList(jsonObject.getString("wineGrapeSort").split(", ")));
         }
-        productBuilder.capacity(jsonObject.getFloat("wineCapacity"));
+        if (jsonObject.has("wineCapacity")) {
+            if(jsonObject.getString("wineCapacity").contains(",")) {
+                productBuilder.capacity(Float.parseFloat(jsonObject.getString("wineCapacity").replace(",", ".")));
+            } else {
+                productBuilder.capacity(jsonObject.getFloat("wineCapacity"));
+            }
+        }
 
         return productBuilder.build();
     }

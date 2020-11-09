@@ -41,7 +41,7 @@ public class ExportProductDtoList {
         log.info("Job started");
 
         List<ParserApi.Wine> wines = parseService
-                .parseWineList(requestsService.getJsonList())
+                .parseWineList(requestsService.getJson())
                 .stream()
                 .map(this::getProtobufProduct)
                 .collect(Collectors.toList());
@@ -66,6 +66,9 @@ public class ExportProductDtoList {
 
         if (wine.getBrand() != null) {
             builder.setBrand(wine.getBrand());
+        }
+        if (wine.getSparkling() != null ){
+            builder.setSparkling(true);
         }
         if (wine.getCountry() != null) {
             builder.setCountry(wine.getCountry());

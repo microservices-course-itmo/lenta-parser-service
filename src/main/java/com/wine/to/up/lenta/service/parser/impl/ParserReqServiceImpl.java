@@ -1,5 +1,6 @@
 package com.wine.to.up.lenta.service.parser.impl;
 
+import com.google.gson.Gson;
 import com.wine.to.up.lenta.service.parser.ParserReqService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,9 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 @Slf4j
 @AllArgsConstructor
@@ -56,76 +60,81 @@ public class ParserReqServiceImpl implements ParserReqService {
         return this;
     }
 
-    public ParserRspImpl getJsonList() {
+    public ParserRspImpl getJson() {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(apiUrl))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(apiBody))
-                .build();
-
         ParserRspImpl wineList = new ParserRspImpl();
 
-        HttpResponse<?> response = null;
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            executor.shutdownNow();
-            System.gc();
-        } catch (Exception e) {
-           log.error("Bad request: `%s` \n; Catch exception: `%s`",response.statusCode(), e);
-           return null;
-        } finally {
+        JSONArray jsonArr = new JSONArray(apiBody);
 
 
-            JSONObject jsonObject = new JSONObject(response.body().toString());
-            JSONArray array = jsonObject.getJSONArray("skus");
+        for (int a = 0; a < jsonArr.length(); a++) {
 
-            for (int i = 0; i < array.length(); i++) {
-                Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
-                Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
-                String imageUrl = null;
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(jsonArr.getJSONObject(a).toString()))
+                    .build();
 
-                if (array.getJSONObject(i).has("imageUrl")) {
-                    imageUrl = String.valueOf(array.getJSONObject(i).get("imageUrl"));
+            HttpResponse<?> response = null;
+            try {
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            } catch (Exception e) {
+                log.error("Bad request: `%s` \n; Catch exception: `%s`", response.statusCode(), e);
+                return null;
+            } finally {
+                JSONObject jsonObject = new JSONObject(response.body().toString());
+                JSONArray array = jsonObject.getJSONArray("skus");
+
+                for (int i = 0; i < array.length(); i++) {
+                    Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
+                    Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
+                    String imageUrl = null;
+
+                    if (array.getJSONObject(i).has("imageUrl")) {
+                        imageUrl = String.valueOf(array.getJSONObject(i).get("imageUrl"));
+                    }
+
+                    Double rating = array.getJSONObject(i).getDouble("averageRating");
+
+                    JSONObject jsonString = new JSONObject()
+                            .put("imageUrl", imageUrl)
+                            .put("wineOldPrice", wineOldPrice)
+                            .put("wineNewPrice", wineNewPrice)
+                            .put("wineRating", rating)
+                            .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"));
+                    if(jsonArr.getJSONObject(a).getString("nodeCode").equals("c529e2e61ea65b2c9f45b32b62d75a0b5")){
+                        jsonString.put("wineSparkling", true);
+                    }
+                    StringBuilder productHtml = new StringBuilder()
+                            .append(baseUrl)
+                            .append(array.getJSONObject(i).getString("skuUrl"));
+                    Document document = null;
+                    try {
+                        document = Jsoup.connect(String.valueOf(productHtml))
+                                .header("Accept-Encoding", "gzip, deflate")
+                                .userAgent("Opera")
+                                .maxBodySize(0)
+                                .timeout(15000)
+                                .get();
+                    } catch (IOException e) {
+                        log.error("Can't parse wine characteristics", e);
+                        return null;
+
+                    } finally {
+                        wineList.add(getProperties(jsonString, productHtml, document));
+                    }
                 }
-
-                Double rating = array.getJSONObject(i).getDouble("averageRating");
-
-                JSONObject jsonString = new JSONObject()
-                        .put("imageUrl", imageUrl)
-                        .put("wineOldPrice", wineOldPrice)
-                        .put("wineNewPrice", wineNewPrice)
-                        .put("wineRating", rating)
-                        .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"));
-
-                StringBuilder productHtml = new StringBuilder()
-                        .append(baseUrl)
-                        .append(array.getJSONObject(i).getString("skuUrl"));
-
-                wineList.add(getProperties(jsonString, productHtml));
             }
         }
         return wineList;
     }
 
-    public JSONObject getProperties(JSONObject jsonString, StringBuilder productHtml){
+    public JSONObject getProperties(JSONObject jsonString, StringBuilder productHtml, Document document){
 
-        Document document = null;
-        try {
-            document = Jsoup.connect(String.valueOf(productHtml))
-                    .header("Accept-Encoding", "gzip, deflate")
-                    .userAgent("Opera")
-                    .maxBodySize(0)
-                    .timeout(30000)
-                    .get();
-        } catch (IOException e) {
-            log.error("Can't parse wine characteristics", e);
-            return null;
-
-        } finally {
             Elements elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
 
             for (Element element : elem) {
@@ -171,15 +180,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                         jsonString.put("winePackagingType", value.text());
                         break;
                 }
-
-            }
         }
         return jsonString;
-    }
-
-    public static void main(String[] args){
-        ParserReqServiceImpl parserReqService = new ParserReqServiceImpl("https://lenta.com", "https://lenta.com/api/v1/skus/list", "{\"nodeCode\":\"ca36224e8c82be1181aad8835310555bf\",\"filters\":[],\"tag\":\"\",\"typeSearch\":1,\"sortingType\":\"ByPriority\",\"offset\":0,\"limit\":\"750\",\"updateFilters\":true}");
-
-        System.out.println(parserReqService.getJsonList().getWineList().length());
     }
 }

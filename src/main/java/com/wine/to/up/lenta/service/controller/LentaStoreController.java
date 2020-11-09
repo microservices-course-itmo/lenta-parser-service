@@ -22,11 +22,10 @@ public class LentaStoreController {
 
     @GetMapping(name = "/parser", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getParserResult() {
-        try {
-            return new ResponseEntity<>(parserReqServiceImpl.getJsonList().getWineList().toList(), HttpStatus.OK);
-        } catch (Exception e){
-            log.error("Ex:", e);
+        if (parserReqServiceImpl.getJson() == null) {
+            return new ResponseEntity<>("Parser return nothing, check internet connection or check lenta api request", HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(parserReqServiceImpl.getJson().getWines().toList(), HttpStatus.OK);
         }
-        return null;
     }
 }

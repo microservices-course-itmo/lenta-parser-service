@@ -20,7 +20,13 @@ public enum Sugar {
 
     MEDIUM(ParserApi.Wine.Sugar.MEDIUM, "Полусладкое"),
 
-    SWEET(ParserApi.Wine.Sugar.SWEET, "Сладкое");
+    SWEET(ParserApi.Wine.Sugar.SWEET, "Сладкое"),
+
+    LIQUER(ParserApi.Wine.Sugar.SWEET, "Ликерное"),
+
+    BRUT(ParserApi.Wine.Sugar.DRY, "Брют"),
+
+    EXTRA_BRUT(ParserApi.Wine.Sugar.DRY, "Экстра брют");
 
     private final ParserApi.Wine.Sugar productSugar;
 

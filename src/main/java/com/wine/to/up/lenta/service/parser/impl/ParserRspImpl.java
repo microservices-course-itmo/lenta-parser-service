@@ -14,17 +14,17 @@ import java.util.List;
 @Setter
 public class ParserRspImpl implements ParserRsp {
 
-    private JSONArray wineList = new JSONArray();
+    private JSONArray wines = new JSONArray();
 
     public void add(JSONObject jsonObject) {
-        wineList.put(jsonObject);
+        wines.put(jsonObject);
     }
 
     public String toString() {
-        return wineList.toString();
+        return wines.toString();
     }
 
     public List<Object> getJsonList(){
-        return wineList.toList();
+        return wines.toList();
     }
 }

@@ -18,7 +18,9 @@ public enum Color {
 
     ROSE(ParserApi.Wine.Color.ROSE, "Розовый"),
 
-    WHITE(ParserApi.Wine.Color.WHITE, "Белый");
+    WHITE(ParserApi.Wine.Color.WHITE, "Белый"),
+
+    ORANGE(ParserApi.Wine.Color.ORANGE, "Оранжевый");
 
     private final ParserApi.Wine.Color productColor;
 
