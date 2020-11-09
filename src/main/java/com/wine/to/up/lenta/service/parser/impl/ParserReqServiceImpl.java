@@ -125,7 +125,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                         return null;
 
                     } finally {
-                        wineList.add(getProperties(jsonString, productHtml, document));
+                        wineList.add(getProperties(jsonString, document));
                     }
                 }
             }
@@ -133,7 +133,7 @@ public class ParserReqServiceImpl implements ParserReqService {
         return wineList;
     }
 
-    public JSONObject getProperties(JSONObject jsonString, StringBuilder productHtml, Document document){
+    public JSONObject getProperties(JSONObject jsonString, Document document){
 
             Elements elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
 
