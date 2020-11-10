@@ -13,7 +13,6 @@ import java.util.List;
 @ToString
 public class ProductDTO {
 
-//    private String name;
     private Float oldPrice;
     private Float newPrice;
     private String link;

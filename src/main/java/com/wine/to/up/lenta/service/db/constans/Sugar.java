@@ -1,7 +1,6 @@
 package com.wine.to.up.lenta.service.db.constans;
 
 import com.wine.to.up.parser.common.api.schema.ParserApi;
-import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,10 +29,10 @@ public enum Sugar {
 
     private final ParserApi.Wine.Sugar productSugar;
 
-    private final String sugar;
+    private final String sugarWine;
 
     private static final Map<String, Sugar> SUGAR_MAP = Arrays.stream(
-            Sugar.values()).collect(Collectors.toMap(Sugar::getSugar, Function.identity())
+            Sugar.values()).collect(Collectors.toMap(Sugar::getSugarWine, Function.identity())
     );
 
     public static ParserApi.Wine.Sugar resolve(String sugar) {

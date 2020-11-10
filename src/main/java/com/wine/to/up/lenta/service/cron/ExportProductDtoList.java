@@ -1,9 +1,9 @@
 package com.wine.to.up.lenta.service.cron;
 
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
-import com.wine.to.up.lenta.service.db.constans.Color;
-import com.wine.to.up.lenta.service.db.constans.Sugar;
+
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
+import com.wine.to.up.lenta.service.helpers.ExportProductDtoListHelper;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
 import com.wine.to.up.parser.common.api.schema.ParserApi;
@@ -16,13 +16,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 @Slf4j
 @PropertySource("classpath:lenta-site.properties")
 public class ExportProductDtoList {
 
     @Value("${string.for.cron}")
-    private String SHOP;
+    private String shopLink;
 
     private final ParserReqServiceImpl requestsService;
     private final LentaWineParserServiceImpl parseService;
@@ -47,7 +46,7 @@ public class ExportProductDtoList {
                 .collect(Collectors.toList());
 
         ParserApi.WineParsedEvent message = ParserApi.WineParsedEvent.newBuilder()
-                .setShopLink(SHOP)
+                .setShopLink(shopLink)
                 .addAllWines(wines)
                 .build();
 
@@ -59,67 +58,25 @@ public class ExportProductDtoList {
     }
 
     private ParserApi.Wine getProtobufProduct(ProductDTO wine) {
-        ParserApi.Wine.Sugar sugar = convertSugar(wine.getSugar());
-        ParserApi.Wine.Color color = convertColor(wine.getColor());
-
         var builder = ParserApi.Wine.newBuilder();
 
-        if (wine.getBrand() != null) {
-            builder.setBrand(wine.getBrand());
-        }
-        if (wine.getSparkling() != null ){
-            builder.setSparkling(true);
-        }
-        if (wine.getCountry() != null) {
-            builder.setCountry(wine.getCountry());
-        }
-        if (wine.getCapacity() != null) {
-            builder.setCapacity(wine.getCapacity());
-        }
-        if (wine.getStrength() != null) {
-            builder.setStrength(wine.getStrength());
-        }
-        if (color != null) {
-            builder.setColor(color);
-        }
-        if (sugar != null) {
-            builder.setSugar(sugar);
-        }
-        if (wine.getOldPrice() != null) {
-            builder.setOldPrice(wine.getOldPrice());
-        }
-        if (wine.getImage() != null) {
-            builder.setImage(wine.getImage());
-        }
-        if (wine.getManufacturer() != null) {
-            builder.setManufacturer(wine.getManufacturer());
-        }
-        if (wine.getLink() != null) {
-            builder.setLink(wine.getLink());
-        }
-        if (wine.getGrapeSort() != null) {
-            builder.addAllGrapeSort(wine.getGrapeSort());
-        }
-        if (wine.getGastronomy() != null) {
-            builder.setGastronomy(wine.getGastronomy());
-        }
-        if (wine.getTaste() != null) {
-            builder.setTaste(wine.getTaste());
-        }
-        if (wine.getFlavor() != null) {
-            builder.setFlavor(wine.getFlavor());
-        }
-        if (wine.getRating() != null) {
-            builder.setRating(wine.getRating());
-        }
+        ExportProductDtoListHelper.fillBrand(builder, wine);
+        ExportProductDtoListHelper.fillSparkling(builder, wine);
+        ExportProductDtoListHelper.fillCountry(builder, wine);
+        ExportProductDtoListHelper.fillCapacity(builder, wine);
+        ExportProductDtoListHelper.fillStrength(builder, wine);
+        ExportProductDtoListHelper.fillColor(builder, wine);
+        ExportProductDtoListHelper.fillSugar(builder, wine);
+        ExportProductDtoListHelper.fillOldPrice(builder, wine);
+        ExportProductDtoListHelper.fillImage(builder, wine);
+        ExportProductDtoListHelper.fillManufacturer(builder, wine);
+        ExportProductDtoListHelper.fillLink(builder, wine);
+        ExportProductDtoListHelper.fillGrapeSort(builder, wine);
+        ExportProductDtoListHelper.fillGastronomy(builder, wine);
+        ExportProductDtoListHelper.fillTaste(builder, wine);
+        ExportProductDtoListHelper.fillFlavor(builder, wine);
+        ExportProductDtoListHelper.fillRating(builder, wine);
+
         return builder.build();
-    }
-
-    private ParserApi.Wine.Sugar convertSugar(String value) {
-        return Sugar.resolve(value);
-    }
-
-    private ParserApi.Wine.Color convertColor(String value) {
-        return Color.resolve(value);
     }
 }

@@ -2,7 +2,6 @@ package com.wine.to.up.lenta.service.messaging.serialization;
 
 import com.wine.to.up.parser.common.api.schema.ParserApi;
 import org.apache.kafka.common.serialization.Serializer;
-import com.wine.to.up.parser.common.api.schema.UpdateProducts;
 
 /**
  * Serializer for {@link ParserApi.WineParsedEvent}

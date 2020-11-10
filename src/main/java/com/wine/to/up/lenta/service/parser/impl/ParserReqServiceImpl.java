@@ -1,6 +1,5 @@
 package com.wine.to.up.lenta.service.parser.impl;
 
-import com.google.gson.Gson;
 import com.wine.to.up.lenta.service.parser.ParserReqService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,9 +21,6 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 @Slf4j
 @AllArgsConstructor
@@ -38,6 +34,8 @@ public class ParserReqServiceImpl implements ParserReqService {
 
     private final String apiBody;
 
+    private HttpResponse<?> response;
+
     private static final String BRAND_NAME = "Бренд";
     private static final String COUNTRY_NAME = "Страна производителя";
     private static final String CAPACITY_NAME = "Литраж";
@@ -49,6 +47,8 @@ public class ParserReqServiceImpl implements ParserReqService {
     private static final String GACTRANOMY = "Гастрономия";
     private static final String TASTE = "Вкус";
     private static final String MANUFACTURER = "Вид упаковки";
+
+    private static final String IMAGEURL = "imageUrl";
 
 
     public ParserReqServiceImpl changeToLocal(){
@@ -78,7 +78,6 @@ public class ParserReqServiceImpl implements ParserReqService {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonArr.getJSONObject(a).toString()))
                     .build();
 
-            HttpResponse<?> response = null;
             try {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -94,14 +93,14 @@ public class ParserReqServiceImpl implements ParserReqService {
                     Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
                     String imageUrl = null;
 
-                    if (array.getJSONObject(i).has("imageUrl")) {
-                        imageUrl = String.valueOf(array.getJSONObject(i).get("imageUrl"));
+                    if (array.getJSONObject(i).has(IMAGEURL)) {
+                        imageUrl = String.valueOf(array.getJSONObject(i).get(IMAGEURL));
                     }
 
                     Double rating = array.getJSONObject(i).getDouble("averageRating");
 
                     JSONObject jsonString = new JSONObject()
-                            .put("imageUrl", imageUrl)
+                            .put(IMAGEURL, imageUrl)
                             .put("wineOldPrice", wineOldPrice)
                             .put("wineNewPrice", wineNewPrice)
                             .put("wineRating", rating)
@@ -122,8 +121,6 @@ public class ParserReqServiceImpl implements ParserReqService {
                                 .get();
                     } catch (IOException e) {
                         log.error("Can't parse wine characteristics", e);
-                        return null;
-
                     } finally {
                         wineList.add(getProperties(jsonString, document));
                     }
@@ -141,7 +138,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 Document iterdoc = Jsoup.parse(element.toString());
                 String title = iterdoc.getElementsByClass("sku-card-tab-params__label-block").text();
                 Elements value = iterdoc.getElementsByClass("sku-card-tab-params__value");
-                if (value.size() == 0) {
+                if (value.isEmpty()) {
                     value = iterdoc.getElementsByClass("link sku-card-tab-params__link");
                 }
 
@@ -178,6 +175,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                         break;
                     case MANUFACTURER:
                         jsonString.put("winePackagingType", value.text());
+                        break;
+                    default:
                         break;
                 }
         }
