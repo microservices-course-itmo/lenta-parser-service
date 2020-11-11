@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.net.http.HttpResponse;
+
 @Configuration
 @PropertySource("classpath:lenta-site.properties")
 public class ParserConfiguration {
@@ -20,9 +22,11 @@ public class ParserConfiguration {
     @Value("${site.rest.body}")
     private String apiBody;
 
+    private HttpResponse<?> response;
+
     @Bean
     public ParserReqServiceImpl parserReqService(){
-        return new ParserReqServiceImpl(url, apiUrl, apiBody);
+        return new ParserReqServiceImpl(url, apiUrl, apiBody, response);
     }
 
     @Bean
