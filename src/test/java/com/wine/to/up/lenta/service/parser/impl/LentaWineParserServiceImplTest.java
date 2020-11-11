@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 @NoArgsConstructor
 public class LentaWineParserServiceImplTest {
     @Test
-    public void parserTest() {
+    public void parserServiceTest() {
         ProductDTO.ProductDTOBuilder productBuilder = ProductDTO.builder();
         float a = (float) 1578.99;
         productBuilder.oldPrice(a);
