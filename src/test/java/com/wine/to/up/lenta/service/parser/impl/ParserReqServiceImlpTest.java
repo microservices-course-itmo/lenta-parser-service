@@ -14,10 +14,10 @@ import static org.junit.Assert.assertEquals;
 
 @Validated
 @Slf4j
-public class ParserReqServiceImlpTest  extends Mockito{
+public class ParserReqServiceImlpTest extends Mockito{
 
     @Test
-    public void testParser() throws IOException {
+    public void parserReqTest() throws IOException {
         String url = "https://lenta.com";
         String apiUrl = "";
         String apiBody = "";
