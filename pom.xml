@@ -16,7 +16,7 @@
     </parent>
 
     <properties>
-        <current-version>0.2.0</current-version>
+        <current-version>0.3.0</current-version>
 
         <service.commonlib.version>0.2.1-SNAPSHOT</service.commonlib.version>
         <parser.common.api.version>0.2.2-SNAPSHOT</parser.common.api.version>
@@ -73,15 +73,12 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
-
-        <!-- Jsoup -->
+        
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${org.jsoup.version}</version>
         </dependency>
-
-        <!-- Json -->
 
         <dependency>
             <groupId>com.wine.to.up</groupId>

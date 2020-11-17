@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @PropertySource("classpath:lenta-site.properties")
 public class ExportProductDtoList {
 
-    @Value("${string.for.cron}")
+    @Value("${site.main.url}")
     private String shopLink;
 
     private final ParserReqServiceImpl requestsService;

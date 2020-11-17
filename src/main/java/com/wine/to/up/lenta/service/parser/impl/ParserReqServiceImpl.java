@@ -50,6 +50,12 @@ public class ParserReqServiceImpl implements ParserReqService {
 
     private static final String IMAGEURL = "imageUrl";
 
+    public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody) {
+        this.baseUrl = baseUrl;
+        this.apiUrl = apiUrl;
+        this.apiBody = apiBody;
+        this.response = null;
+    }
 
 
     public ParserReqServiceImpl changeToLocal(){
