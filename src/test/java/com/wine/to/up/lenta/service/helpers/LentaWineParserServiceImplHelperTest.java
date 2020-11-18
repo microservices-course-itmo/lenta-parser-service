@@ -10,7 +10,6 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-@Slf4j
 @NoArgsConstructor
 public class LentaWineParserServiceImplHelperTest {
     @Test

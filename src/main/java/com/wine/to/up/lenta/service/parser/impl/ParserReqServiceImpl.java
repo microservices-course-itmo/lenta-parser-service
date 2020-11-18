@@ -56,16 +56,6 @@ public class ParserReqServiceImpl implements ParserReqService {
         this.response = null;
     }
 
-
-    public ParserReqServiceImpl changeToLocal(){
-        this.baseUrl = "";
-        return this;
-    }
-    public ParserReqServiceImpl changeToOnline(){
-        this.baseUrl = "https://lenta.com";
-        return this;
-    }
-
     public ParserRspImpl getJson() {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();

@@ -6,11 +6,11 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.http.HttpResponse;
-import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 
-public class ParserReqServiceImlpTest extends Mockito{
+public class ParserReqServiceImlpTest{
 
     @Test
     public void parserReqTest() throws IOException {
@@ -37,7 +37,7 @@ public class ParserReqServiceImlpTest extends Mockito{
         verifiedJson.put("wineCapacity","0.75");
         File in = new File("src/main/resources/testVine.html");
         Document iterdoc = Jsoup.parse(in, null);
-        assertEquals(verifiedJson.toString(), parserReqServiceImpl.changeToLocal().getProperties(jsonAns, iterdoc).toString() );
+        assertEquals(verifiedJson.toString(), parserReqServiceImpl.getProperties(jsonAns, iterdoc).toString() );
     }
 }
 
