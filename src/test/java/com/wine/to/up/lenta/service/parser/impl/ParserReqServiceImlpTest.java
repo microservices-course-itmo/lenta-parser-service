@@ -12,8 +12,6 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
 
 
-@Validated
-@Slf4j
 public class ParserReqServiceImlpTest extends Mockito{
 
     @Test

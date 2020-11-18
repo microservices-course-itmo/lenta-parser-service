@@ -133,7 +133,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 }
             }
         }
-        log.info("Parsing completed");
+        log.info("Parsing completed ");
         return wineList;
     }
 
