@@ -22,9 +22,8 @@ public class ParserReqServiceImlpTest extends Mockito{
         JSONObject jo = new JSONObject();
         jo.put("code", "458545");
         jo.put("brand", "CALVET SELECTION DES PRINCES");
-        jo.put("skuUrl", "file:///D:/Lessons/Java/lenta-parser-service/src/main/resources/testVine.html");
+        jo.put("skuUrl", "src/main/resources/testVine.html");
         JSONObject verifiedJson = new JSONObject();
-        StringBuilder productHtml = new StringBuilder().append(jo.getString("skuUrl"));
         verifiedJson.put("winePackagingType","Стеклянная бутылка");
         verifiedJson.put("wineTaste","Хорошо сбалансированный, деликатный вкус.");
         verifiedJson.put("wineCountry","Франция");
