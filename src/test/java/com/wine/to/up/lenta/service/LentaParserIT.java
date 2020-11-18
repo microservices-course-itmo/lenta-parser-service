@@ -7,13 +7,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.Assert.*;
 
-public class IntegrationalFullTest extends AbstractTest {
+public class LentaParserIT extends AbstractTest {
     private static final String BRAND_NAME = "Бренд";
     private static final String COUNTRY_NAME = "Страна производителя";
     private static final String CAPACITY_NAME = "Литраж";

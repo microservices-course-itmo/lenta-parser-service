@@ -9,7 +9,6 @@ import java.net.http.HttpResponse;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-
 public class ParserReqServiceImlpTest{
 
     @Test
