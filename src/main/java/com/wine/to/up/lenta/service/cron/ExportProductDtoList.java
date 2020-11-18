@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,24 +38,31 @@ public class ExportProductDtoList {
     @Scheduled(cron = "${cron.expression}")
     public void runCronTask() {
 
-        log.info("Job started");
+        long startTime = new Date().getTime();
+        log.info("Start run job method at {}", startTime);
 
-        List<ParserApi.Wine> wines = parseService
-                .parseWineList(requestsService.getJson())
-                .stream()
-                .map(this::getProtobufProduct)
-                .collect(Collectors.toList());
+        try {
+            List<ParserApi.Wine> wines = parseService
+                    .parseWineList(requestsService.getJson())
+                    .stream()
+                    .map(this::getProtobufProduct)
+                    .collect(Collectors.toList());
 
-        ParserApi.WineParsedEvent message = ParserApi.WineParsedEvent.newBuilder()
-                .setShopLink(shopLink)
-                .addAllWines(wines)
-                .build();
+            log.info("Parsed: {} wines", wines.size());
 
-        log.info("Parsed: {} wines", wines.size());
+            ParserApi.WineParsedEvent message = ParserApi.WineParsedEvent.newBuilder()
+                    .setShopLink(shopLink)
+                    .addAllWines(wines)
+                    .build();
 
-        kafkaSendMessageService.sendMessage(message);
+            log.info("Send message to Kafka");
+            kafkaSendMessageService.sendMessage(message);
+        } catch (Exception ex){
+            log.error("Can't export product list", ex);
+        }
 
-        log.info("Send message to Kafka");
+        log.info("End run job method at {}; duration = {}", new Date().getTime(), (new Date().getTime() - startTime));
+
     }
 
     private ParserApi.Wine getProtobufProduct(ProductDTO wine) {

@@ -47,7 +47,6 @@ public class ParserReqServiceImpl implements ParserReqService {
     private static final String GACTRANOMY = "Гастрономия";
     private static final String TASTE = "Вкус";
     private static final String MANUFACTURER = "Вид упаковки";
-
     private static final String IMAGEURL = "imageUrl";
 
     public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody) {
@@ -134,6 +133,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 }
             }
         }
+        log.info("Parsing completed");
         return wineList;
     }
 

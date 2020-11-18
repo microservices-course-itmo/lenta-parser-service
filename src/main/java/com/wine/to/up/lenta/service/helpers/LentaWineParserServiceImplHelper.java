@@ -1,6 +1,7 @@
 package com.wine.to.up.lenta.service.helpers;
 
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -9,6 +10,8 @@ import java.util.Arrays;
  * Class helper for LentaWineParserServiceImpl.getProductDTO
  * checks json fields on NULL and fills builder`s fields
  */
+
+@Slf4j
 public class LentaWineParserServiceImplHelper {
 
     private static final String WINECAPACITY = "wineCapacity";
@@ -19,106 +22,192 @@ public class LentaWineParserServiceImplHelper {
 
     public static void fillOldPrice(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineOldPrice")) {
-            productBuilder.oldPrice(jsonObject.getFloat("wineOldPrice"));
+            try {
+                productBuilder.oldPrice(jsonObject.getFloat("wineOldPrice"));
+            } catch (Exception ex){
+                log.error("Can't set old price:", ex);
+                productBuilder.oldPrice(null);
+            }
+
         }
     }
 
     public static void fillNewPrice(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineNewPrice")) {
-            productBuilder.newPrice(jsonObject.getFloat("wineNewPrice"));
+            try {
+                productBuilder.newPrice(jsonObject.getFloat("wineNewPrice"));
+            } catch (Exception ex){
+                log.error("Can't set new price:", ex);
+                productBuilder.newPrice(null);
+            }
         }
     }
 
     public static void fillImageUrl(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("imageUrl")) {
-            productBuilder.image(jsonObject.getString("imageUrl"));
+            try {
+                productBuilder.image(jsonObject.getString("imageUrl"));
+            } catch (Exception ex){
+                log.error("Can't set image :", ex);
+                productBuilder.image(null);
+            }
         }
     }
 
     public static void fillWineRating(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineRating")) {
-            productBuilder.rating(jsonObject.getFloat("wineRating"));
+            try {
+                productBuilder.rating(jsonObject.getFloat("wineRating"));
+            } catch (Exception ex){
+                log.error("Can't set rating:", ex);
+                productBuilder.rating(null);
+            }
         }
     }
 
     public static void fillWineLink(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineLink")) {
-            productBuilder.link(String.valueOf(jsonObject.get("wineLink")));
+            try {
+                productBuilder.link(String.valueOf(jsonObject.get("wineLink")));
+            } catch (Exception ex){
+                log.error("Can't set link:", ex);
+                productBuilder.link(null);
+            }
         }
     }
 
     public static void fillWineBrand(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineBrand")) {
-            productBuilder.brand(jsonObject.getString("wineBrand"));
+            try {
+                productBuilder.brand(jsonObject.getString("wineBrand"));
+            } catch (Exception ex){
+                log.error("Can't set brand:", ex);
+                productBuilder.brand(null);
+            }
         }
     }
 
     public static void fillWineCountry(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineCountry")) {
-            productBuilder.country(jsonObject.getString("wineCountry"));
+            try {
+                productBuilder.country(jsonObject.getString("wineCountry"));
+            } catch (Exception ex){
+                log.error("Can't set country:", ex);
+                productBuilder.country(null);
+            }
         }
     }
 
     public static void fillWineAroma(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineAroma")) {
-            productBuilder.flavor(jsonObject.getString("wineAroma"));
+            try {
+                productBuilder.flavor(jsonObject.getString("wineAroma"));
+            } catch (Exception ex){
+                log.error("Can't set flavor:", ex);
+                productBuilder.flavor(null);
+            }
         }
     }
 
     public static void fillWineSugarContent(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineSugarContent")) {
-            productBuilder.sugar(jsonObject.getString("wineSugarContent"));
+            try {
+                productBuilder.sugar(jsonObject.getString("wineSugarContent"));
+            } catch (Exception ex){
+                log.error("Can't set sugar:", ex);
+                productBuilder.sugar(null);
+            }
         }
     }
 
     public static void fillWineColour(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineColour")) {
-            productBuilder.color(jsonObject.getString("wineColour"));
+            try {
+                productBuilder.color(jsonObject.getString("wineColour"));
+            } catch (Exception ex){
+                log.error("Can't set color:", ex);
+                productBuilder.color(null);
+            }
         }
     }
 
     public static void fillWineGastronomy(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineGastronomy")) {
-            productBuilder.gastronomy(jsonObject.getString("wineGastronomy"));
+            try {
+                productBuilder.gastronomy(jsonObject.getString("wineGastronomy"));
+            } catch (Exception ex){
+                log.error("Can't set gastronomy:", ex);
+                productBuilder.gastronomy(null);
+            }
         }
     }
 
     public static void fillWineStrength(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineStrength")) {
-            productBuilder.strength(jsonObject.getFloat("wineStrength"));
+            try {
+                productBuilder.strength(jsonObject.getFloat("wineStrength"));
+            } catch (Exception ex){
+                log.error("Can't set strength:", ex);
+                productBuilder.strength(null);
+            }
         }
     }
 
     public static void fillWineSparkling(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineSparkling")){
-            productBuilder.sparkling(true);
+            try {
+                productBuilder.sparkling(true);
+            } catch (Exception ex){
+                log.error("Can't set sparkling:", ex);
+                productBuilder.sparkling(null);
+            }
         }
     }
 
     public static void fillWineTaste(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineTaste")) {
-            productBuilder.taste(jsonObject.getString("wineTaste"));
+            try {
+                productBuilder.taste(jsonObject.getString("wineTaste"));
+            } catch (Exception ex){
+                log.error("Can't set taste:", ex);
+                productBuilder.taste(null);
+            }
         }
     }
 
     public static void fillWinePackagingType(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("winePackagingType")) {
-            productBuilder.manufacturer(jsonObject.getString("winePackagingType"));
+            try {
+                productBuilder.manufacturer(jsonObject.getString("winePackagingType"));
+            } catch (Exception ex){
+                log.error("Can't set manufacturer:", ex);
+                productBuilder.manufacturer(null);
+            }
         }
     }
 
     public static void fillWineGrapeSort(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineGrapeSort")) {
-            productBuilder.grapeSort(Arrays.asList(jsonObject.getString("wineGrapeSort").split(", ")));
+            try {
+                productBuilder.grapeSort(Arrays.asList(jsonObject.getString("wineGrapeSort").split(", ")));
+            } catch (Exception ex){
+                log.error("Can't set grape sort:", ex);
+                productBuilder.grapeSort(null);
+            }
         }
     }
 
     public static void fillWineCapacity(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has(WINECAPACITY)) {
-            if(jsonObject.getString(WINECAPACITY).contains(",")) {
-                productBuilder.capacity(Float.parseFloat(jsonObject.getString(WINECAPACITY).replace(",", ".")));
-            } else {
-                productBuilder.capacity(jsonObject.getFloat(WINECAPACITY));
+            try {
+                if (jsonObject.getString(WINECAPACITY).contains(",")) {
+                    productBuilder.capacity(Float.parseFloat(jsonObject.getString(WINECAPACITY).replace(",", ".")));
+                } else {
+                    productBuilder.capacity(jsonObject.getFloat(WINECAPACITY));
+                }
+            } catch (Exception ex){
+                log.error("Can't set capacity", ex);
+                productBuilder.capacity(null);
             }
         }
     }
