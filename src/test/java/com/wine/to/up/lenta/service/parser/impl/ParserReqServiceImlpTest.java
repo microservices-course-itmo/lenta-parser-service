@@ -1,10 +1,8 @@
 package com.wine.to.up.lenta.service.parser.impl;
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
-import org.springframework.validation.annotation.Validated;
 import java.io.File;
 import java.io.IOException;
 import java.net.http.HttpResponse;
@@ -17,9 +15,7 @@ public class ParserReqServiceImlpTest extends Mockito{
     @Test
     public void parserReqTest() throws IOException {
         String url = "https://lenta.com";
-        String apiUrl = "";
         String apiBody = "";
-        HttpResponse<?> response;
         HttpResponse httpResponse = mock(HttpResponse.class);
         ParserReqServiceImpl parserReqServiceImpl = new ParserReqServiceImpl(url, apiBody ,apiBody ,httpResponse);
         JSONObject jsonAns = new JSONObject();
