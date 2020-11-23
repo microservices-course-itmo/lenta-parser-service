@@ -3,6 +3,7 @@ package com.wine.to.up.lenta.service.db.constans;
 import com.wine.to.up.parser.common.api.schema.ParserApi;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
+@Log4j2
 public enum Sugar {
 
     DRY(ParserApi.Wine.Sugar.DRY,"Сухое"),
@@ -36,6 +38,11 @@ public enum Sugar {
     );
 
     public static ParserApi.Wine.Sugar resolve(String sugar) {
-        return SUGAR_MAP.getOrDefault(sugar, Sugar.DRY).productSugar;
+        return SUGAR_MAP.getOrDefault(sugar, getDefault()).productSugar;
+    }
+
+    private static Sugar getDefault(){
+        log.warn("Set default value:", Sugar.DRY);
+        return Sugar.DRY;
     }
 }

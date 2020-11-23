@@ -128,9 +128,13 @@ public class ParserReqServiceImpl implements ParserReqService {
     }
 
     public JSONObject getProperties(JSONObject jsonString, Document document){
-
-            Elements elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
-
+        Elements elem = null;
+        try {
+            elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
+        } catch (NullPointerException ex){
+            log.error("Get null document", ex);
+            return jsonString;
+        } finally {
             for (Element element : elem) {
                 Document iterdoc = Jsoup.parse(element.toString());
                 String title = iterdoc.getElementsByClass("sku-card-tab-params__label-block").text();
@@ -176,6 +180,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                     default:
                         break;
                 }
+            }
         }
         return jsonString;
     }
