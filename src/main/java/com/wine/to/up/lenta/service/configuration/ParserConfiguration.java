@@ -1,5 +1,6 @@
 package com.wine.to.up.lenta.service.configuration;
 
+import com.wine.to.up.lenta.service.components.LentaServiceMetricsCollector;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,5 +30,4 @@ public class ParserConfiguration {
     public LentaWineParserServiceImpl lentaWineParserService(){
         return new LentaWineParserServiceImpl();
     }
-
 }

@@ -57,15 +57,13 @@ public class ParserReqServiceImpl implements ParserReqService {
     }
 
     public ParserRspImpl getJson() {
-
+        log.info("Parsing started");
         ExecutorService executor = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
 
         ParserRspImpl wineList = new ParserRspImpl();
 
         JSONArray jsonArr = new JSONArray(apiBody);
-
-
         for (int a = 0; a < jsonArr.length(); a++) {
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -123,7 +121,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 }
             }
         }
-        log.info("Parsing completed ");
+        log.info("Parsing completed");
         return wineList;
     }
 

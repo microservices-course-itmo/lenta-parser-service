@@ -1,6 +1,7 @@
 package com.wine.to.up.lenta.service.configuration;
 
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
+import com.wine.to.up.lenta.service.components.LentaServiceMetricsCollector;
 import com.wine.to.up.lenta.service.cron.ExportProductDtoList;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
@@ -15,7 +16,7 @@ public class JobConfiguration {
 
     @Bean
     public ExportProductDtoList exportProductDtoList(ParserReqServiceImpl requestsService, LentaWineParserServiceImpl parserService,
-                                                     KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService){
-        return new ExportProductDtoList(requestsService, parserService, kafkaSendMessageService);
+                                                     KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService, LentaServiceMetricsCollector metricsCollector){
+        return new ExportProductDtoList(requestsService, parserService, kafkaSendMessageService, metricsCollector);
     }
 }

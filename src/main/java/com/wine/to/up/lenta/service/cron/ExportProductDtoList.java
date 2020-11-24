@@ -2,11 +2,13 @@ package com.wine.to.up.lenta.service.cron;
 
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 
+import com.wine.to.up.lenta.service.components.LentaServiceMetricsCollector;
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import com.wine.to.up.lenta.service.helpers.ExportProductDtoListHelper;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
 import com.wine.to.up.parser.common.api.schema.ParserApi;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -27,12 +29,13 @@ public class ExportProductDtoList {
     private final ParserReqServiceImpl requestsService;
     private final LentaWineParserServiceImpl parseService;
     private final KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService;
+    private final LentaServiceMetricsCollector metricsCollector;
 
-    public ExportProductDtoList(ParserReqServiceImpl requestsService, LentaWineParserServiceImpl parseService,
-                                KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService) {
-        this.requestsService = Objects.requireNonNull(requestsService, "Can't get requestsService");
+    public ExportProductDtoList(ParserReqServiceImpl requestsService, LentaWineParserServiceImpl parseService, KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService, LentaServiceMetricsCollector metricsCollector) {
         this.parseService = Objects.requireNonNull(parseService, "Can't get parseService");
+        this.requestsService = Objects.requireNonNull(requestsService, "Can't get requestsService");
         this.kafkaSendMessageService = Objects.requireNonNull(kafkaSendMessageService, "Can't get kafkaSendMessageService");
+        this.metricsCollector = Objects.requireNonNull(metricsCollector, "Can't get metricsCollector");
     }
 
     @Scheduled(cron = "${cron.expression}")
@@ -62,7 +65,7 @@ public class ExportProductDtoList {
         }
 
         log.info("End run job method at {}; duration = {}", new Date().getTime(), (new Date().getTime() - startTime));
-
+        metricsCollector.productListJob(new Date().getTime() - startTime);
     }
 
     private ParserApi.Wine getProtobufProduct(ProductDTO wine) {
