@@ -1,26 +1,32 @@
 package com.wine.to.up.lenta.service.parser;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-@NoArgsConstructor
-@Getter
-@Setter
+import java.util.List;
+
 /**
  * Wrapper class for JSONArray that contain put method and toString method
  */
-public class ParserRsp {
+public interface ParserRsp {
 
-    private JSONArray wineList = new JSONArray();
+    /**
+     * Method that add JSONObject to list
+     *
+     * @param jsonObject - List of JSONObject
+     */
+    void add(JSONObject jsonObject);
 
-    public void add(JSONObject jsonObject) {
-        wineList.put(jsonObject);
-    }
+    /**
+     * Method that convert List of JSONObject to String
+     *
+     * @return List of JSONObject that was convert to String
+     */
+    String toString();
 
-    public String toString() {
-        return wineList.toString();
-    }
+    /**
+     * Method that return List of JSONObject
+     *
+     * @return List of JSONObject
+     */
+    List<Object> getJsonList();
 }

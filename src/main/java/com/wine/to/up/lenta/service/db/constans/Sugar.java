@@ -1,8 +1,9 @@
 package com.wine.to.up.lenta.service.db.constans;
 
-import com.wine.to.up.parser.common.api.schema.UpdateProducts;
+import com.wine.to.up.parser.common.api.schema.ParserApi;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -11,27 +12,37 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
+@Log4j2
 public enum Sugar {
 
-    DRY(UpdateProducts.Product.Sugar.DRY,"сухое"),
+    DRY(ParserApi.Wine.Sugar.DRY,"Сухое"),
 
-    MEDIUM_DRY(UpdateProducts.Product.Sugar.MEDIUM_DRY, "полусухое"),
+    MEDIUM_DRY(ParserApi.Wine.Sugar.MEDIUM_DRY, "Полусухое"),
 
-    MEDIUM(UpdateProducts.Product.Sugar.MEDIUM, "полусладкое"),
+    MEDIUM(ParserApi.Wine.Sugar.MEDIUM, "Полусладкое"),
 
-    SWEET(UpdateProducts.Product.Sugar.SWEET, "сладкое"),
+    SWEET(ParserApi.Wine.Sugar.SWEET, "Сладкое"),
 
-    UNRECOGNIZED(UpdateProducts.Product.Sugar.UNRECOGNIZED, "Unrecognized");
+    LIQUER(ParserApi.Wine.Sugar.SWEET, "Ликерное"),
 
-    private final UpdateProducts.Product.Sugar productSugar;
+    BRUT(ParserApi.Wine.Sugar.DRY, "Брют"),
 
-    private final String sugar;
+    EXTRA_BRUT(ParserApi.Wine.Sugar.DRY, "Экстра брют");
+
+    private final ParserApi.Wine.Sugar productSugar;
+
+    private final String sugarWine;
 
     private static final Map<String, Sugar> SUGAR_MAP = Arrays.stream(
-            Sugar.values()).collect(Collectors.toMap(Sugar::getSugar, Function.identity())
+            Sugar.values()).collect(Collectors.toMap(Sugar::getSugarWine, Function.identity())
     );
 
-    public static UpdateProducts.Product.Sugar resolve(String sugar) {
-        return SUGAR_MAP.getOrDefault(sugar, Sugar.UNRECOGNIZED).productSugar;
+    public static ParserApi.Wine.Sugar resolve(String sugar) {
+        return SUGAR_MAP.getOrDefault(sugar, getDefault()).productSugar;
+    }
+
+    private static Sugar getDefault(){
+        log.warn("Set default value:", Sugar.DRY);
+        return Sugar.DRY;
     }
 }

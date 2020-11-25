@@ -1,0 +1,52 @@
+package com.wine.to.up.lenta.service.parser.impl;
+
+import com.wine.to.up.lenta.service.db.dto.ProductDTO;
+import com.wine.to.up.lenta.service.helpers.LentaWineParserServiceImplHelper;
+import com.wine.to.up.lenta.service.parser.LentaWineParserService;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
+@NoArgsConstructor
+public class LentaWineParserServiceImpl implements LentaWineParserService {
+
+    public List<ProductDTO> parseWineList(ParserRspImpl wineList) {
+
+        List<ProductDTO> productDTOList = new ArrayList<>();
+
+        JSONArray productList = wineList.getWines();
+        for (int i = 0; i < productList.length(); i++) {
+            productDTOList.add(getProductDTO(productList.getJSONObject(i)));
+        }
+        return productDTOList;
+    }
+
+    private ProductDTO getProductDTO(JSONObject jsonObject) {
+        ProductDTO.ProductDTOBuilder productBuilder = ProductDTO.builder();
+
+        LentaWineParserServiceImplHelper.fillOldPrice(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillNewPrice(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillImageUrl(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineRating(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineLink(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineBrand(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineCountry(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineAroma(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineSugarContent(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineColour(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineGastronomy(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineStrength(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineSparkling(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineTaste(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWinePackagingType(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineGrapeSort(jsonObject, productBuilder);
+        LentaWineParserServiceImplHelper.fillWineCapacity(jsonObject, productBuilder);
+
+        return productBuilder.build();
+    }
+}

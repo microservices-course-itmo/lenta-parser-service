@@ -1,8 +1,9 @@
 package com.wine.to.up.lenta.service.db.constans;
 
-import com.wine.to.up.parser.common.api.schema.UpdateProducts;
+import com.wine.to.up.parser.common.api.schema.ParserApi;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -11,25 +12,31 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
+@Log4j2
 public enum Color {
 
-    RED(UpdateProducts.Product.Color.RED,"Красное"),
+    RED(ParserApi.Wine.Color.RED,"Красный"),
 
-    ROSE(UpdateProducts.Product.Color.ROSE, "Розовое"),
+    ROSE(ParserApi.Wine.Color.ROSE, "Розовый"),
 
-    WHITE(UpdateProducts.Product.Color.WHITE, "Белое"),
+    WHITE(ParserApi.Wine.Color.WHITE, "Белый"),
 
-    UNRECOGNIZED(UpdateProducts.Product.Color.UNRECOGNIZED, "Unrecognized");
+    ORANGE(ParserApi.Wine.Color.ORANGE, "Оранжевый");
 
-    private final UpdateProducts.Product.Color productColor;
+    private final ParserApi.Wine.Color productColor;
 
-    private final String color;
+    private final String colorWine;
 
     private static final Map<String, Color> COLOR_MAP = Arrays.stream(
-            Color.values()).collect(Collectors.toMap(Color::getColor, Function.identity())
+            Color.values()).collect(Collectors.toMap(Color::getColorWine, Function.identity())
     );
 
-    public static UpdateProducts.Product.Color resolve(String color) {
-        return COLOR_MAP.getOrDefault(color, Color.UNRECOGNIZED).productColor;
+    public static ParserApi.Wine.Color resolve(String color) {
+        return COLOR_MAP.getOrDefault(color, getDefault()).productColor;
+    }
+
+    private static Color getDefault(){
+        log.warn("Set default value:", Color.RED);
+        return Color.RED;
     }
 }
