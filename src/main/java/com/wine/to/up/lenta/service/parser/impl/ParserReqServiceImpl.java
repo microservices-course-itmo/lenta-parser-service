@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.context.annotation.Scope;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,6 +27,7 @@ import java.util.concurrent.Executors;
 @AllArgsConstructor
 @Getter
 @Setter
+@Scope(value="prototype")
 public class ParserReqServiceImpl implements ParserReqService {
 
     private String baseUrl;
