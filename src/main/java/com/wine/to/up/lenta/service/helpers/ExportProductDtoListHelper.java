@@ -113,6 +113,12 @@ public class ExportProductDtoListHelper {
         }
     }
 
+    public static void fillTitle(ParserApi.Wine.Builder builder, ProductDTO wine) {
+        if (wine.getWineTitle() != null) {
+            builder.setName(wine.getWineTitle());
+        }
+    }
+
     private static ParserApi.Wine.Color convertColor(String value) {
         return Color.resolve(value);
     }

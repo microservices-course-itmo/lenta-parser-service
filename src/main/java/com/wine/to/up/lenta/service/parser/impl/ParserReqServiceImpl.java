@@ -87,6 +87,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 for (int i = 0; i < array.length(); i++) {
                     Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                     Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
+                    String wineTitle = array.getJSONObject(i).getString("title");
                     String imageUrl = null;
 
                     if (array.getJSONObject(i).has(IMAGEURL)) {
@@ -100,7 +101,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                             .put("wineOldPrice", wineOldPrice)
                             .put("wineNewPrice", wineNewPrice)
                             .put("wineRating", rating)
-                            .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"));
+                            .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"))
+                            .put("wineTitle", wineTitle);
                     if(jsonArr.getJSONObject(a).getString("nodeCode").equals("c529e2e61ea65b2c9f45b32b62d75a0b5")){
                         jsonString.put("wineSparkling", true);
                     }

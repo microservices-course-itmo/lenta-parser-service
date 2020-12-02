@@ -87,6 +87,7 @@ public class ExportProductDtoList {
         ExportProductDtoListHelper.fillTaste(builder, wine);
         ExportProductDtoListHelper.fillFlavor(builder, wine);
         ExportProductDtoListHelper.fillRating(builder, wine);
+        ExportProductDtoListHelper.fillTitle(builder, wine);
 
         return builder.build();
     }

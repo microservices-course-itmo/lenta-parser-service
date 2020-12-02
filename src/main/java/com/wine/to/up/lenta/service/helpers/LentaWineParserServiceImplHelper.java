@@ -175,6 +175,17 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    public static void fillWineTitle(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
+        if (jsonObject.has("wineTitle")) {
+            try {
+                productBuilder.wineTitle(jsonObject.getString("wineTitle"));
+            } catch (Exception ex){
+                log.error("Can't set wine name:", ex);
+                productBuilder.wineTitle(null);
+            }
+        }
+    }
+
     public static void fillWinePackagingType(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("winePackagingType")) {
             try {
