@@ -1,6 +1,10 @@
 package com.wine.to.up.lenta.service.parser.impl;
 
+import com.wine.to.up.commonlib.annotations.InjectEventLogger;
+import com.wine.to.up.commonlib.logging.EventLogger;
+import com.wine.to.up.lenta.service.components.LentaServiceMetricsCollector;
 import com.wine.to.up.lenta.service.parser.ParserReqService;
+import io.micrometer.core.instrument.Metrics;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +26,9 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEvents.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -30,6 +37,8 @@ import java.util.concurrent.Executors;
 @Scope(value="prototype")
 public class ParserReqServiceImpl implements ParserReqService {
 
+    private static final String PARSED_WINES_COUNT = "parsed_wines_count";
+
     private String baseUrl;
 
     private final String apiUrl;
@@ -37,6 +46,13 @@ public class ParserReqServiceImpl implements ParserReqService {
     private final String apiBody;
 
     private HttpResponse<?> response;
+
+    private final LentaServiceMetricsCollector metricsCollector;
+
+    private final AtomicInteger parsedWines = new AtomicInteger();
+
+    @InjectEventLogger
+    private EventLogger eventLogger;
 
     private static final String BRAND_NAME = "Бренд";
     private static final String COUNTRY_NAME = "Страна производителя";
@@ -51,15 +67,25 @@ public class ParserReqServiceImpl implements ParserReqService {
     private static final String MANUFACTURER = "Вид упаковки";
     private static final String IMAGEURL = "imageUrl";
 
-    public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody) {
+    public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody, LentaServiceMetricsCollector metricsCollector) {
         this.baseUrl = baseUrl;
         this.apiUrl = apiUrl;
         this.apiBody = apiBody;
         this.response = null;
+        this.metricsCollector = Objects.requireNonNull(metricsCollector, "Can't get metricsCollector");
+        Metrics.gauge(PARSED_WINES_COUNT, parsedWines);
+    }
+
+    public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody, HttpResponse httpResponse) {
+        this.baseUrl = baseUrl;
+        this.apiUrl = apiUrl;
+        this.apiBody = apiBody;
+        this.response = httpResponse;
+        this.metricsCollector = null;
     }
 
     public ParserRspImpl getJson() {
-        log.info("Parsing started");
+        eventLogger.info(I_START_PARSING);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
 
@@ -78,7 +104,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             } catch (Exception e) {
-                log.error("Bad request: `%s` \n; Catch exception: `%s`", response.statusCode(), e);
+                eventLogger.error(E_BAD_REQUEST, response.statusCode(), e);
+                parsedWines.set(wineList.getJsonList().size());
                 return null;
             } finally {
                 JSONObject jsonObject = new JSONObject(response.body().toString());
@@ -105,6 +132,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                             .put("wineTitle", wineTitle);
                     if(jsonArr.getJSONObject(a).getString("nodeCode").equals("c529e2e61ea65b2c9f45b32b62d75a0b5")){
                         jsonString.put("wineSparkling", true);
+                    } else {
+                        jsonString.put("wineSparkling", false);
                     }
                     StringBuilder productHtml = new StringBuilder()
                             .append(baseUrl)
@@ -118,14 +147,15 @@ public class ParserReqServiceImpl implements ParserReqService {
                                 .timeout(15000)
                                 .get();
                     } catch (IOException e) {
-                        log.error("Can't parse wine characteristics", e);
+                        eventLogger.error(E_CHARACTERISTICS_ERROR, e);
                     } finally {
                         wineList.add(getProperties(jsonString, document));
                     }
                 }
             }
         }
-        log.info("Parsing completed");
+        eventLogger.info(I_WINES_PARSED, wineList.getJsonList().size());
+        parsedWines.set(wineList.getJsonList().size());
         return wineList;
     }
 
@@ -134,7 +164,7 @@ public class ParserReqServiceImpl implements ParserReqService {
         try {
             elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
         } catch (NullPointerException ex){
-            log.error("Get null document", ex);
+            eventLogger.error(E_NULL_DOCUMENT, ex);
             return jsonString;
         } finally {
             for (Element element : elem) {
