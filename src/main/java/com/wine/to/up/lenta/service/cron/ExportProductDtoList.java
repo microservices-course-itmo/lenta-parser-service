@@ -65,6 +65,7 @@ public class ExportProductDtoList {
 
             eventLogger.info(I_KAFKA_SEND_MESSAGE_SUCCESS, message);
             kafkaSendMessageService.sendMessage(message);
+            metricsCollector.incWinesSentToKafka(wines.size());
         } catch (Exception ex){
             eventLogger.error(E_PRODUCT_LIST_EXPORT_ERROR, ex);
         }
