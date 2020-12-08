@@ -53,8 +53,6 @@ public class ParserReqServiceImpl implements ParserReqService {
 
     private final String apiBody;
 
-    private HttpResponse<?> response;
-
     private final LentaServiceMetricsCollector metricsCollector;
 
     private final AtomicInteger parsedWines = new AtomicInteger();
@@ -81,7 +79,6 @@ public class ParserReqServiceImpl implements ParserReqService {
         this.baseUrl = baseUrl;
         this.apiUrl = apiUrl;
         this.apiBody = apiBody;
-        this.response = null;
         this.metricsCollector = Objects.requireNonNull(metricsCollector, "Can't get metricsCollector");
         Metrics.gauge(PARSED_WINES_COUNT, parsedWines);
         Metrics.gauge(PARSING_IN_PROGRESS_GAUGE, parsingInProgress);
@@ -92,11 +89,10 @@ public class ParserReqServiceImpl implements ParserReqService {
         );
     }
 
-    public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody, HttpResponse httpResponse) {
+    public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody) {
         this.baseUrl = baseUrl;
         this.apiUrl = apiUrl;
         this.apiBody = apiBody;
-        this.response = httpResponse;
         this.metricsCollector = null;
     }
 
@@ -117,6 +113,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonArr.getJSONObject(a).toString()))
                     .build();
 
+            HttpResponse<?> response = null;
             try {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
             } catch (Exception e) {
