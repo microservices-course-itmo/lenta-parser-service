@@ -21,8 +21,7 @@ public class ParserReqServiceImlpTest{
     public void parserReqTest() throws IOException {
         String url = "https://lenta.com";
         String apiBody = "";
-        HttpResponse httpResponse = mock(HttpResponse.class);
-        ParserReqServiceImpl parserReqServiceImpl = new ParserReqServiceImpl(url, apiBody, apiBody, httpResponse);
+        ParserReqServiceImpl parserReqServiceImpl = new ParserReqServiceImpl(url, apiBody, apiBody);
         JSONObject jsonAns = new JSONObject();
         JSONObject jo = new JSONObject();
         jo.put("code", "458545");
