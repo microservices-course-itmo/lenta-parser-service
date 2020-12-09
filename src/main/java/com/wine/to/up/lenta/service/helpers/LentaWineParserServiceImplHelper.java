@@ -163,7 +163,12 @@ public class LentaWineParserServiceImplHelper {
     public static void fillWineSparkling(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineSparkling")){
             try {
-                productBuilder.sparkling(true);
+                if (jsonObject.getBoolean("wineSparkling") == true) {
+                    productBuilder.sparkling(true);
+                } else {
+                    productBuilder.sparkling(null);
+                }
+
             } catch (Exception ex){
                 eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"sparkling:", getURL(jsonObject));
                 productBuilder.sparkling(null);

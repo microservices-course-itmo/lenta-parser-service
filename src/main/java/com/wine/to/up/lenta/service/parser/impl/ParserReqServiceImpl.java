@@ -159,7 +159,11 @@ public class ParserReqServiceImpl implements ParserReqService {
 
                     Document document = getItemHtml(String.valueOf(productHtml));
 
+                    long startParsingTime = new Date().getTime();
                     wineList.add(getProperties(jsonString, document));
+                    metricsCollector.parsingDetailsDuration(new Date().getTime() - startParsingTime);
+
+                    eventLogger.info(I_DETAILS_PARSED);
                     parsingInProgress.decrementAndGet();
                     metricsCollector.incParsingComplete();
 
@@ -174,7 +178,7 @@ public class ParserReqServiceImpl implements ParserReqService {
     }
 
     public JSONObject getProperties(JSONObject jsonString, Document document) {
-        long startParsingTime = new Date().getTime();
+
         Elements elem = null;
         try {
             elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
@@ -236,9 +240,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                     }
                 }
             }
-            eventLogger.info(I_DETAILS_PARSED);
         }
-        metricsCollector.parsingDetailsDuration(new Date().getTime() - startParsingTime);
         return jsonString;
     }
 
