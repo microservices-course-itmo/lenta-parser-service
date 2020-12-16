@@ -173,6 +173,7 @@ public class ParserReqServiceImpl implements ParserReqService {
             eventLogger.info(I_PAGE_PARSED);
         }
         eventLogger.info(I_WINES_PARSED, wineList.getJsonList().size());
+        lastSucceededParsingTime.set(System.currentTimeMillis());
         parsedWines.set(wineList.getJsonList().size());
         return wineList;
     }

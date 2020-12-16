@@ -74,7 +74,7 @@ public class ExportProductDtoList {
         metricsCollector.productListJob(new Date().getTime() - startTime);
     }
 
-    private ParserApi.Wine getProtobufProduct(ProductDTO wine) {
+     public ParserApi.Wine getProtobufProduct(ProductDTO wine) {
         var builder = ParserApi.Wine.newBuilder();
 
         ExportProductDtoListHelper.fillBrand(builder, wine);
