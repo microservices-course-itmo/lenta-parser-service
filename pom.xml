@@ -56,6 +56,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20200518</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
         </dependency>
@@ -80,12 +86,6 @@
             <groupId>com.wine.to.up</groupId>
             <artifactId>parser-common-api</artifactId>
             <version>${parser.common.api.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20200518</version>
         </dependency>
 
         <dependency>
