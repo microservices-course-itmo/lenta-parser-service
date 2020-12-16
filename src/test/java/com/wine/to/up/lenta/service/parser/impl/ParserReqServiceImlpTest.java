@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 public class ParserReqServiceImlpTest{
@@ -42,6 +43,23 @@ public class ParserReqServiceImlpTest{
         File in = new File("src/main/resources/testVine.html");
         Document iterdoc = Jsoup.parse(in, null);
         assertEquals(verifiedJson.toString(), parserReqServiceImpl.getProperties(jsonAns, iterdoc).toString() );
+    }
+
+    @Test
+    public void getHtml(){
+        StringBuilder productHtml = new StringBuilder()
+                .append("https://lenta.com/product/vino-abrau-kupazh-svetlyjj-beloe-suh-rossiya-075l-379933/");
+        String url = "https://lenta.com";
+        String apiBody = "";
+        LentaServiceMetricsCollector lentaServiceMetricsCollector = mock(LentaServiceMetricsCollector.class);
+        ParserReqServiceImpl parserReqServiceImpl = new ParserReqServiceImpl(url, apiBody, apiBody, lentaServiceMetricsCollector);
+        assertNotNull(parserReqServiceImpl.getItemHtml(productHtml.toString()));
+        assertNotNull(parserReqServiceImpl);
+        assertNotNull(parserReqServiceImpl.getMetricsCollector());
+        assertNotNull(parserReqServiceImpl.getParsedWines());
+        assertNotNull(parserReqServiceImpl.getApiBody());
+        assertNotNull(parserReqServiceImpl.getBaseUrl());
+        assertNotNull(parserReqServiceImpl.getApiUrl());
     }
 }
 
