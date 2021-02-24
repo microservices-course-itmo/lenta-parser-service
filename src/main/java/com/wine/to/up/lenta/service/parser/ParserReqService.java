@@ -12,5 +12,5 @@ public interface ParserReqService {
      *
      * @return Array of JSONObject
      */
-    ParserRspImpl getJson();
+    ParserRspImpl getJson(Integer batchSize);
 }

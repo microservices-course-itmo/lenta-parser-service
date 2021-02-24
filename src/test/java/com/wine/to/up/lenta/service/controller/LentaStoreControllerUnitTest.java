@@ -31,7 +31,7 @@
 //    @Before
 //    public void setUp() {
 //        ParserReqServiceImpl parserReqService = mock(ParserReqServiceImpl.class);
-//        when(parserReqService.getJson()).thenReturn(getParserRsp());
+//        when(parserReqService.getJson(0)).thenReturn(getParserRsp());
 //        LentaServiceMetricsCollector lentaServiceMetricsCollector = mock(LentaServiceMetricsCollector.class);
 //        doNothing().when(lentaServiceMetricsCollector).parseSiteJson(isA(Long.class));
 //        lentaStoreControllerMock = new LentaStoreController(parserReqService, lentaServiceMetricsCollector);

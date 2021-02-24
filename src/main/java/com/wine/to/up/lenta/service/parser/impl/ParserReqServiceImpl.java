@@ -97,8 +97,10 @@ public class ParserReqServiceImpl implements ParserReqService {
     }
 
     @Timed(PARSING_PROCESS_DURATION_SUMMARY)
-    public ParserRspImpl getJson() {
+    public ParserRspImpl getJson(Integer batchSize) {
         eventLogger.info(I_START_PARSING);
+        parsingInProgress.incrementAndGet();
+        metricsCollector.incParsingStarted();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
 
@@ -127,9 +129,10 @@ public class ParserReqServiceImpl implements ParserReqService {
                 JSONObject jsonObject = new JSONObject(response.body().toString());
                 JSONArray array = jsonObject.getJSONArray("skus");
                 long startParsingingTime = new Date().getTime();
-                for (int i = 0; i < array.length(); i++) {
-                    parsingInProgress.incrementAndGet();
-                    metricsCollector.incParsingStarted();
+                for (int i = 0; i < array.length() ; i++) {
+                    if (batchSize != null && (i < batchSize || i >= batchSize + 60)){
+                        continue;
+                    }
                     Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                     Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
                     String wineTitle = array.getJSONObject(i).getString("title");
@@ -164,14 +167,16 @@ public class ParserReqServiceImpl implements ParserReqService {
                     metricsCollector.parsingDetailsDuration(new Date().getTime() - startParsingTime);
 
                     eventLogger.info(I_DETAILS_PARSED);
-                    parsingInProgress.decrementAndGet();
-                    metricsCollector.incParsingComplete();
 
+                    if (wineList.getJsonList().size() % 20 == 0){
+                        eventLogger.info(I_PAGE_PARSED);
+                    }
                 }
                 metricsCollector.parsingPageDuration(new Date().getTime() - startParsingingTime);
             }
-            eventLogger.info(I_PAGE_PARSED);
         }
+        parsingInProgress.decrementAndGet();
+        metricsCollector.incParsingComplete();
         eventLogger.info(I_WINES_PARSED, wineList.getJsonList().size());
         lastSucceededParsingTime.set(System.currentTimeMillis());
         parsedWines.set(wineList.getJsonList().size());
