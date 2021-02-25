@@ -2,6 +2,7 @@ package com.wine.to.up.lenta.service.controller;
 
 import com.wine.to.up.lenta.service.components.LentaServiceMetricsCollector;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
+import com.wine.to.up.lenta.service.parser.impl.ParserRspImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,12 @@ public class LentaStoreController {
     @GetMapping(name = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getParserResult() {
         long startTime = new Date().getTime();
-        if (parserReqServiceImpl.getJson() == null) {
-            metricsCollector.parseSiteJson(new Date().getTime() - startTime);
+        ParserRspImpl parserRsp = parserReqServiceImpl.getJson(60);
+        metricsCollector.parseSiteJson(new Date().getTime() - startTime);
+        if (parserRsp == null) {
             return new ResponseEntity<>("Parser return nothing, check internet connection or check lenta api request", HttpStatus.BAD_REQUEST);
         } else {
-            metricsCollector.parseSiteJson(new Date().getTime() - startTime);
-            return new ResponseEntity<>(parserReqServiceImpl.getJson().getWines().toList(), HttpStatus.OK);
+            return new ResponseEntity<>(parserRsp.getWines().toList(), HttpStatus.OK);
         }
     }
 }

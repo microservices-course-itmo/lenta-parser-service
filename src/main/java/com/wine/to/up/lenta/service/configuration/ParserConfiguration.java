@@ -22,8 +22,8 @@ public class ParserConfiguration {
     private String apiBody;
 
     @Bean
-    public ParserReqServiceImpl parserReqService(){
-        return new ParserReqServiceImpl(url, apiUrl, apiBody);
+    public ParserReqServiceImpl parserReqService(LentaServiceMetricsCollector metricsCollector){
+        return new ParserReqServiceImpl(url, apiUrl, apiBody, metricsCollector);
     }
 
     @Bean

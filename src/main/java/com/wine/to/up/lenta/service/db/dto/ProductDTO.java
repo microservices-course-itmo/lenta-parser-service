@@ -30,4 +30,5 @@ public class ProductDTO {
     private String flavor;
     private Float rating;
     private Boolean sparkling;
+    private String wineTitle;
 }

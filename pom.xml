@@ -16,10 +16,10 @@
     </parent>
 
     <properties>
-        <current-version>0.3.0</current-version>
+        <current-version>0.5.1</current-version>
 
-        <service.commonlib.version>0.2.2-SNAPSHOT</service.commonlib.version>
-        <parser.common.api.version>0.2.2-SNAPSHOT</parser.common.api.version>
+        <service.commonlib.version>0.2.3-SNAPSHOT</service.commonlib.version>
+        <parser.common.api.version>0.2.3-SNAPSHOT</parser.common.api.version>
         <org.jsoup.version>1.13.1</org.jsoup.version>
         <org.json.version>20200518</org.json.version>
     </properties>
@@ -56,6 +56,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20200518</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
         </dependency>
@@ -83,36 +89,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${org.json.version}</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
         </dependency>
     </dependencies>
 
-    <!-- integration-test splitting-->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.7.1</version>
-                <executions>
-                    <execution>
-                        <id>integration-test</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>integration-test</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>verify</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

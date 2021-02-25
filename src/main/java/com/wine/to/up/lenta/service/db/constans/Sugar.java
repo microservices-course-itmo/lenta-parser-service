@@ -42,7 +42,6 @@ public enum Sugar {
     }
 
     private static Sugar getDefault(){
-        log.warn("Set default value:", Sugar.DRY);
         return Sugar.DRY;
     }
 }
