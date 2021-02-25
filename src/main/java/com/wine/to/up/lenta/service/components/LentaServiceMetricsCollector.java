@@ -86,11 +86,6 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
             .help("wine details parsing execution time")
             .register();
 
-    private static final Counter prometheusWinesPublishedToKafkaCounter = Counter.build()
-            .name(WINES_PUBLISHED_TO_KAFKA_COUNT)
-            .help("Number of wines that have been sent to Kafka")
-            .register();
-
     public void parseSiteCsv(long time) {
         Metrics.timer(PARSE_SITE_CSV).record(time, TimeUnit.MILLISECONDS);
         parseSiteCsvSummary.observe(time);
@@ -120,13 +115,16 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
     }
 
     public void fetchingDetailsDuration(long time) {
-        Metrics.timer(WINE_DETAILS_FETCHING_DURATION_SUMMARY).record(time, TimeUnit.MILLISECONDS);
-        wineDetailsFetchingDurationSummary.observe(time);
+        long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
+        wineDetailsFetchingDurationSummary.observe(milliTime);
+        Metrics.summary(WINE_DETAILS_FETCHING_DURATION_SUMMARY).record(milliTime);
+
     }
 
     public void parsingDetailsDuration(long time){
-        Metrics.timer(WINE_DETAILS_PARSING_DURATION_SUMMARY).record(time, TimeUnit.MILLISECONDS);
-        wineDetailsParsingDurationSummary.observe(time);
+        long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
+        wineDetailsParsingDurationSummary.observe(milliTime);
+        Metrics.summary(WINE_DETAILS_PARSING_DURATION_SUMMARY).record(time);
     }
 
     public void countParsingComplete(String status) {
@@ -141,7 +139,7 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
 
     public void incWinesSentToKafka(int count) {
         Metrics.counter(WINES_PUBLISHED_TO_KAFKA_COUNT).increment(count);
-        prometheusWinesPublishedToKafkaCounter.inc(count);
+
     }
 
 }
