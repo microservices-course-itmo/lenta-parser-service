@@ -26,7 +26,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -99,8 +98,7 @@ public class ParserReqServiceImpl implements ParserReqService {
     @Timed(PARSING_PROCESS_DURATION_SUMMARY)
     public ParserRspImpl getJson(Integer batchSize) {
         eventLogger.info(I_START_PARSING);
-        parsingInProgress.incrementAndGet();
-        metricsCollector.incParsingStarted();
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
 
@@ -122,7 +120,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 eventLogger.error(E_BAD_REQUEST, response.statusCode(), e);
                 parsedWines.set(wineList.getJsonList().size());
                 eventLogger.error(W_PAGE_PARSING_FAILED, e);
-                metricsCollector.incParsingFailed();
+                metricsCollector.countParsingComplete("FAILED");
                 return null;
             } finally {
                 metricsCollector.fetchingPageDuration(new Date().getTime() - startFetchingTime);
@@ -133,6 +131,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                     if (batchSize != null && (i < batchSize || i >= batchSize + 60)){
                         continue;
                     }
+                    parsingInProgress.incrementAndGet();
+                    metricsCollector.incParsingStarted();
                     Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                     Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
                     String wineTitle = array.getJSONObject(i).getString("title");
@@ -166,17 +166,18 @@ public class ParserReqServiceImpl implements ParserReqService {
                     wineList.add(getProperties(jsonString, document));
                     metricsCollector.parsingDetailsDuration(new Date().getTime() - startParsingTime);
 
-                    eventLogger.info(I_DETAILS_PARSED);
+                    eventLogger.info(I_WINE_DETAILS_PARSED, jsonString);
+                    parsingInProgress.decrementAndGet();
+                    metricsCollector.countParsingComplete("SUCCESS");
 
                     if (wineList.getJsonList().size() % 20 == 0){
-                        eventLogger.info(I_PAGE_PARSED);
+                        eventLogger.info(I_WINES_PAGE_PARSED, wineList.getWines());
+                        metricsCollector.parsingPageDuration(new Date().getTime() - startParsingingTime);
                     }
                 }
-                metricsCollector.parsingPageDuration(new Date().getTime() - startParsingingTime);
             }
         }
-        parsingInProgress.decrementAndGet();
-        metricsCollector.incParsingComplete();
+
         eventLogger.info(I_WINES_PARSED, wineList.getJsonList().size());
         lastSucceededParsingTime.set(System.currentTimeMillis());
         parsedWines.set(wineList.getJsonList().size());

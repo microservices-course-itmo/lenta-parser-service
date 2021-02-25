@@ -66,12 +66,10 @@ public class ExportProductDtoList {
             metricsCollector.incWinesSentToKafka(wines.size());
         } catch (Exception ex) {
             eventLogger.error(E_PRODUCT_LIST_EXPORT_ERROR, ex);
-        } finally {
-            eventLogger.info(I_END_JOB, new Date().getTime(), (new Date().getTime() - startTime));
-            metricsCollector.productListJob(new Date().getTime() - startTime);
-
         }
 
+        eventLogger.info(I_END_JOB, new Date().getTime(), (new Date().getTime() - startTime));
+        metricsCollector.productListJob(new Date().getTime() - startTime);
     }
 
     public ParserApi.Wine getProtobufProduct(ProductDTO wine) {

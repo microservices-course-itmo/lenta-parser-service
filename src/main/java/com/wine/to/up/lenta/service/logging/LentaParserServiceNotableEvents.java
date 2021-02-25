@@ -19,7 +19,7 @@ public enum LentaParserServiceNotableEvents implements NotableEvent {
     I_WINES_PARSED("Wines  successfully parsed {}"),
     I_START_PARSING("Start parsing"),
     I_WINE_DETAILS_PARSED("Wine details parsed successfully"),
-    I_PAGE_PARSED("Page {} parsed"),
+    I_WINES_PAGE_PARSED("Page {} parsed"),
     I_DETAILS_PARSED("Details parsed");
 
     private final String template;
