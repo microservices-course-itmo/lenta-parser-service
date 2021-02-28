@@ -36,6 +36,7 @@ public enum Color {
     }
 
     private static Color getDefault(){
+        log.warn("Set default value:", Color.RED);
         return Color.RED;
     }
 }
