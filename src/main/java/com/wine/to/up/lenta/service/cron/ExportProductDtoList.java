@@ -1,7 +1,5 @@
 package com.wine.to.up.lenta.service.cron;
 
-import com.wine.to.up.commonlib.annotations.InjectEventLogger;
-import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.commonlib.messaging.KafkaMessageSender;
 
 import com.wine.to.up.lenta.service.components.LentaServiceMetricsCollector;
@@ -21,8 +19,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEvents.*;
-
 @Slf4j
 @PropertySource("classpath:lenta-site.properties")
 public class ExportProductDtoList {
@@ -35,9 +31,6 @@ public class ExportProductDtoList {
     private final KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService;
     private final LentaServiceMetricsCollector metricsCollector;
 
-    @InjectEventLogger
-    private EventLogger eventLogger;
-
     public ExportProductDtoList(ParserReqServiceImpl requestsService, LentaWineParserServiceImpl parseService, KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService, LentaServiceMetricsCollector metricsCollector) {
         this.parseService = Objects.requireNonNull(parseService, "Can't get parseService");
         this.requestsService = Objects.requireNonNull(requestsService, "Can't get requestsService");
@@ -49,7 +42,7 @@ public class ExportProductDtoList {
     public void runCronTask() {
 
         long startTime = new Date().getTime();
-        eventLogger.info(I_START_JOB, startTime);
+        log.info("Start run job method at {}", startTime);
 
         try {
             List<ParserApi.Wine> wines = parseService
@@ -58,23 +51,24 @@ public class ExportProductDtoList {
                     .map(this::getProtobufProduct)
                     .collect(Collectors.toList());
 
+            log.info("Parsed: {} wines", wines.size());
+
             ParserApi.WineParsedEvent message = ParserApi.WineParsedEvent.newBuilder()
                     .setShopLink(shopLink)
                     .addAllWines(wines)
                     .build();
 
-            eventLogger.info(I_KAFKA_SEND_MESSAGE_SUCCESS, message);
+            log.info("Send message to Kafka");
             kafkaSendMessageService.sendMessage(message);
-            metricsCollector.incWinesSentToKafka(wines.size());
         } catch (Exception ex){
-            eventLogger.error(E_PRODUCT_LIST_EXPORT_ERROR, ex);
+            log.error("Can't export product list", ex);
         }
 
-        eventLogger.info(I_END_JOB, new Date().getTime(), (new Date().getTime() - startTime));
+        log.info("End run job method at {}; duration = {}", new Date().getTime(), (new Date().getTime() - startTime));
         metricsCollector.productListJob(new Date().getTime() - startTime);
     }
 
-     public ParserApi.Wine getProtobufProduct(ProductDTO wine) {
+    private ParserApi.Wine getProtobufProduct(ProductDTO wine) {
         var builder = ParserApi.Wine.newBuilder();
 
         ExportProductDtoListHelper.fillBrand(builder, wine);
@@ -93,7 +87,6 @@ public class ExportProductDtoList {
         ExportProductDtoListHelper.fillTaste(builder, wine);
         ExportProductDtoListHelper.fillFlavor(builder, wine);
         ExportProductDtoListHelper.fillRating(builder, wine);
-        ExportProductDtoListHelper.fillTitle(builder, wine);
 
         return builder.build();
     }
