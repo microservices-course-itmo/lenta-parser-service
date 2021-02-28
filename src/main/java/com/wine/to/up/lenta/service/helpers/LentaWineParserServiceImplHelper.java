@@ -1,14 +1,10 @@
 package com.wine.to.up.lenta.service.helpers;
 
-import com.wine.to.up.commonlib.annotations.InjectEventLogger;
-import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-
-import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEvents.*;
 
 /**
  * Class helper for LentaWineParserServiceImpl.getProductDTO
@@ -20,9 +16,6 @@ public class LentaWineParserServiceImplHelper {
 
     private static final String WINECAPACITY = "wineCapacity";
 
-    @InjectEventLogger
-    private static EventLogger eventLogger;
-
     private LentaWineParserServiceImplHelper() {
         throw new IllegalStateException("Class helper");
     }
@@ -32,7 +25,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.oldPrice(jsonObject.getFloat("wineOldPrice"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"old price", getURL(jsonObject));
+                log.error("Can't set old price:", ex);
                 productBuilder.oldPrice(null);
             }
 
@@ -44,7 +37,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.newPrice(jsonObject.getFloat("wineNewPrice"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT, "new price", getURL(jsonObject));
+                log.error("Can't set new price:", ex);
                 productBuilder.newPrice(null);
             }
         }
@@ -55,7 +48,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.image(jsonObject.getString("imageUrl"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"image", getURL(jsonObject));
+                log.error("Can't set image :", ex);
                 productBuilder.image(null);
             }
         }
@@ -66,7 +59,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.rating(jsonObject.getFloat("wineRating"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"rating", getURL(jsonObject));
+                log.error("Can't set rating:", ex);
                 productBuilder.rating(null);
             }
         }
@@ -77,7 +70,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.link(String.valueOf(jsonObject.get("wineLink")));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"link", null);
+                log.error("Can't set link:", ex);
                 productBuilder.link(null);
             }
         }
@@ -88,7 +81,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.brand(jsonObject.getString("wineBrand"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"brand:", getURL(jsonObject));
+                log.error("Can't set brand:", ex);
                 productBuilder.brand(null);
             }
         }
@@ -99,7 +92,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.country(jsonObject.getString("wineCountry"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"country:", getURL(jsonObject));
+                log.error("Can't set country:", ex);
                 productBuilder.country(null);
             }
         }
@@ -110,7 +103,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.flavor(jsonObject.getString("wineAroma"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"flavor:", getURL(jsonObject));
+                log.error("Can't set flavor:", ex);
                 productBuilder.flavor(null);
             }
         }
@@ -121,7 +114,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.sugar(jsonObject.getString("wineSugarContent"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"sugar:", getURL(jsonObject));
+                log.error("Can't set sugar:", ex);
                 productBuilder.sugar(null);
             }
         }
@@ -132,7 +125,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.color(jsonObject.getString("wineColour"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"color:", getURL(jsonObject));
+                log.error("Can't set color:", ex);
                 productBuilder.color(null);
             }
         }
@@ -143,7 +136,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.gastronomy(jsonObject.getString("wineGastronomy"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"gastronomy:", getURL(jsonObject));
+                log.error("Can't set gastronomy:", ex);
                 productBuilder.gastronomy(null);
             }
         }
@@ -154,7 +147,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.strength(jsonObject.getFloat("wineStrength"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"strength:", getURL(jsonObject));
+                log.error("Can't set strength:", ex);
                 productBuilder.strength(null);
             }
         }
@@ -163,14 +156,9 @@ public class LentaWineParserServiceImplHelper {
     public static void fillWineSparkling(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineSparkling")){
             try {
-                if (jsonObject.getBoolean("wineSparkling") == true) {
-                    productBuilder.sparkling(true);
-                } else {
-                    productBuilder.sparkling(null);
-                }
-
+                productBuilder.sparkling(true);
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"sparkling:", getURL(jsonObject));
+                log.error("Can't set sparkling:", ex);
                 productBuilder.sparkling(null);
             }
         }
@@ -181,19 +169,8 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.taste(jsonObject.getString("wineTaste"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"taste:", getURL(jsonObject));
+                log.error("Can't set taste:", ex);
                 productBuilder.taste(null);
-            }
-        }
-    }
-
-    public static void fillWineTitle(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
-        if (jsonObject.has("wineTitle")) {
-            try {
-                productBuilder.wineTitle(jsonObject.getString("wineTitle"));
-            } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"wine name:", getURL(jsonObject));
-                productBuilder.wineTitle(null);
             }
         }
     }
@@ -203,7 +180,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.manufacturer(jsonObject.getString("winePackagingType"));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"manufacturer:", getURL(jsonObject));
+                log.error("Can't set manufacturer:", ex);
                 productBuilder.manufacturer(null);
             }
         }
@@ -214,7 +191,7 @@ public class LentaWineParserServiceImplHelper {
             try {
                 productBuilder.grapeSort(Arrays.asList(jsonObject.getString("wineGrapeSort").split(", ")));
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"grape sort:", getURL(jsonObject));
+                log.error("Can't set grape sort:", ex);
                 productBuilder.grapeSort(null);
             }
         }
@@ -229,17 +206,9 @@ public class LentaWineParserServiceImplHelper {
                     productBuilder.capacity(jsonObject.getFloat(WINECAPACITY));
                 }
             } catch (Exception ex){
-                eventLogger.warn(W_WINE_ATTRIBUTE_ABSENT,"capacity", getURL(jsonObject));
+                log.error("Can't set capacity", ex);
                 productBuilder.capacity(null);
             }
-        }
-    }
-
-    public static String getURL(JSONObject jsonObject){
-        if (jsonObject.has("wineLink")) {
-            return jsonObject.getString("wineLink");
-        } else {
-            return null;
         }
     }
 }

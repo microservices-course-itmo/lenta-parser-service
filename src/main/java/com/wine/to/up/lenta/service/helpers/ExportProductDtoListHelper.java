@@ -1,23 +1,15 @@
 package com.wine.to.up.lenta.service.helpers;
 
-import com.wine.to.up.commonlib.annotations.InjectEventLogger;
-import com.wine.to.up.commonlib.logging.EventLogger;
 import com.wine.to.up.lenta.service.db.constans.Color;
 import com.wine.to.up.lenta.service.db.constans.Sugar;
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import com.wine.to.up.parser.common.api.schema.ParserApi;
-
-import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEvents.*;
 
 /**
  * Class helper for ExportProductDtoList.getProtobufProduct
  * checks wine fields on NULL and fills builder`s fields
  */
 public class ExportProductDtoListHelper {
-
-    @InjectEventLogger
-    private static EventLogger eventLogger;
-
 
     private ExportProductDtoListHelper() {
         throw new IllegalStateException("Class helper");
@@ -118,12 +110,6 @@ public class ExportProductDtoListHelper {
     public static void fillRating(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getRating() != null) {
             builder.setRating(wine.getRating());
-        }
-    }
-
-    public static void fillTitle(ParserApi.Wine.Builder builder, ProductDTO wine) {
-        if (wine.getWineTitle() != null) {
-            builder.setName(wine.getWineTitle());
         }
     }
 
