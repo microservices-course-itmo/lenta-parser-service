@@ -15,9 +15,9 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
+    <!-- Versions for dependencies -->
     <properties>
         <current-version>0.5.1</current-version>
-
         <service.commonlib.version>0.2.3-SNAPSHOT</service.commonlib.version>
         <parser.common.api.version>0.2.3-SNAPSHOT</parser.common.api.version>
         <org.jsoup.version>1.13.1</org.jsoup.version>
