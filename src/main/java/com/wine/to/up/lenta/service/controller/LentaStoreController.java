@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-
+/**
+ * This Lenta controller class that start parsing
+ */
 @RestController
 @RequestMapping("/lenta")
 @Validated
@@ -25,6 +27,10 @@ public class LentaStoreController {
     private final ParserReqServiceImpl parserReqServiceImpl;
     private final LentaServiceMetricsCollector metricsCollector;
 
+    /**
+     * This controller starting parsing and return parsed wines
+     * @return List of parsed wines
+     */
     @GetMapping(name = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getParserResult() {
         long startTime = new Date().getTime();

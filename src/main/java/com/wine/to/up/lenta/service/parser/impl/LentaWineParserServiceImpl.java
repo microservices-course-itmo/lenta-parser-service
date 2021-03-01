@@ -10,11 +10,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * This class consists of methods of creating and filling DTO
+ */
 @Slf4j
 @NoArgsConstructor
 public class LentaWineParserServiceImpl implements LentaWineParserService {
-
+    /**
+     * This class consists of methods of creating DTO
+     * @param wineList array of parsed wines with properties
+     */
     public List<ProductDTO> parseWineList(ParserRspImpl wineList) {
 
         List<ProductDTO> productDTOList = new ArrayList<>();
@@ -25,7 +30,9 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         }
         return productDTOList;
     }
-
+    /**
+     * This class consists of methods of transform parsed properties in DTO format
+     */
     private ProductDTO getProductDTO(JSONObject jsonObject) {
         ProductDTO.ProductDTOBuilder productBuilder = ProductDTO.builder();
 
