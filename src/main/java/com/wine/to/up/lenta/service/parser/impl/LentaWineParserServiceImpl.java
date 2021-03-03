@@ -3,6 +3,8 @@ package com.wine.to.up.lenta.service.parser.impl;
 import com.wine.to.up.lenta.service.db.dto.ProductDTO;
 import com.wine.to.up.lenta.service.helpers.LentaWineParserServiceImplHelper;
 import com.wine.to.up.lenta.service.parser.LentaWineParserService;
+import com.wine.to.up.lenta.service.services.DataBaseService;
+import com.wine.to.up.lenta.service.services.impl.DataBaseServiceImpl;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -15,6 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 public class LentaWineParserServiceImpl implements LentaWineParserService {
 
+    @Autowired
+    private DataBaseServiceImpl dataBaseService;
+
     public List<ProductDTO> parseWineList(ParserRspImpl wineList) {
 
         List<ProductDTO> productDTOList = new ArrayList<>();
@@ -22,6 +27,7 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         JSONArray productList = wineList.getWines();
         for (int i = 0; i < productList.length(); i++) {
             productDTOList.add(getProductDTO(productList.getJSONObject(i)));
+            dataBaseService.create(getProductDTO(productList.getJSONObject(i)));
         }
         return productDTOList;
     }
@@ -48,6 +54,7 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         LentaWineParserServiceImplHelper.fillWineCapacity(jsonObject, productBuilder);
         LentaWineParserServiceImplHelper.fillWineTitle(jsonObject, productBuilder);
 
+//        dataBaseService.create(productBuilder);
         return productBuilder.build();
     }
 }
