@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
+/**
+ * Csv controller
+ */
 @RestController
 @RequestMapping("/csv")
 @Validated
@@ -21,9 +24,21 @@ import java.util.Date;
 @AllArgsConstructor
 public class CsvController {
 
+    /**
+     * ParserReqServiseImpl
+     */
     private final ParserReqServiceImpl parserReqServiceImpl;
+
+    /**
+     * MetricsCollector
+     */
     private final LentaServiceMetricsCollector metricsCollector;
 
+    /**
+     * Controller that send csv
+     *
+     * @return http request with csv
+     */
     @GetMapping(produces = "text/csv")
     public ResponseEntity generateCsv() {
         long startTime = new Date().getTime();

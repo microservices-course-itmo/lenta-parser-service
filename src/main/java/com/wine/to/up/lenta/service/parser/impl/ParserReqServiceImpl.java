@@ -44,77 +44,125 @@ import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEven
 @Scope(value = "prototype")
 public class ParserReqServiceImpl implements ParserReqService {
 
-    /** Metric that count parsed wines */
+    /**
+     * Metric that count parsed wines
+     */
     private static final String PARSED_WINES_COUNT = "parsed_wines_count";
 
-    /** Metric that count parsing which still in progress */
+    /**
+     * Metric that count parsing which still in progress
+     */
     private static final String PARSING_IN_PROGRESS_GAUGE = "parsing_in_progress";
 
-    /** Metric that count summary time of parsing*/
+    /**
+     * Metric that count summary time of parsing
+     */
     private static final String PARSING_PROCESS_DURATION_SUMMARY = "parsing_process_duration";
 
-    /** Metric that stores the time that has passed since the last prasing*/
+    /**
+     * Metric that stores the time that has passed since the last prasing
+     */
     private static final String TIME_SINCE_LAST_SUCCEEDED_PARSING_GAUGE = "time_since_last_succeeded_parsing";
 
-    /** URL of Lenta site*/
+    /**
+     * URL of Lenta site
+     */
     private String baseUrl;
 
-    /** URL of Lenta API*/
+    /**
+     * URL of Lenta API
+     */
     private final String apiUrl;
 
-    /** Body for connection to API */
+    /**
+     * Body for connection to API
+     */
     private final String apiBody;
 
-    /** Collector of metric */
+    /**
+     * Collector of metric
+     */
     private final LentaServiceMetricsCollector metricsCollector;
 
-    /** Counter of parsed wines  */
+    /**
+     * Counter of parsed wines
+     */
     private final AtomicInteger parsedWines = new AtomicInteger();
 
-    /** Counter of wine that parsing right now */
+    /**
+     * Counter of wine that parsing right now
+     */
     private final AtomicInteger parsingInProgress = new AtomicInteger(0);
 
-    /** Time when last parsing had ended successfully - */
+    /**
+     * Time when last parsing had ended successfully
+     */
     private final AtomicLong lastSucceededParsingTime = new AtomicLong(0);
 
-    /** Event logger */
+    /**
+     * Event logger
+     */
     @InjectEventLogger
     private EventLogger eventLogger;
 
-    /** Wine privacy - brand name  */
+    /**
+     * Wine privacy - brand name
+     */
     private static final String BRAND_NAME = "Бренд";
 
-    /** Wine privacy - country_name*/
+    /**
+     * Wine privacy - country_name
+     */
     private static final String COUNTRY_NAME = "Страна производителя";
 
-    /** Wine privacy - capacity name*/
+    /**
+     * Wine privacy - capacity name
+     */
     private static final String CAPACITY_NAME = "Литраж";
 
-    /** Wine privacy - strength name*/
+    /**
+     * Wine privacy - strength name
+     */
     private static final String STRENGTH_NAME = "Крепость (%)";
 
-    /** Wine privacy - color name*/
+    /**
+     * Wine privacy - color name
+     */
     private static final String COLOR_NAME = "Цвет";
 
-    /** Wine privacy - sugar name*/
+    /**
+     * Wine privacy - sugar name
+     */
     private static final String SUGAR_NAME = "Содержание сахара";
 
-    /** Wine privacy - grape sort name*/
+    /**
+     * Wine privacy - grape sort name
+     */
     private static final String GRAPE_SORT_NAME = "Сорт винограда";
 
-    /** Wine privacy - aroma name*/
+    /**
+     * Wine privacy - aroma name
+     */
     private static final String AROMA_NAME = "Аромат";
 
-    /** Wine privacy - gactranomy*/
+    /**
+     * Wine privacy - gactranomy
+     */
     private static final String GACTRANOMY = "Гастрономия";
 
-    /** Wine privacy - taste*/
+    /**
+     * Wine privacy - taste
+     */
     private static final String TASTE = "Вкус";
 
-    /** Wine privacy - manufacturer*/
+    /**
+     * Wine privacy - manufacturer
+     */
     private static final String MANUFACTURER = "Вид упаковки";
 
-    /** Wine privacy - URL of image*/
+    /**
+     * Wine privacy - URL of image
+     */
     private static final String IMAGEURL = "imageUrl";
 
     /**

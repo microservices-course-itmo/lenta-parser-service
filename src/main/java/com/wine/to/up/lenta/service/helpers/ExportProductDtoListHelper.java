@@ -15,7 +15,9 @@ import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEven
  */
 public class ExportProductDtoListHelper {
 
-    /** Event logger */
+    /**
+     * Event logger
+     */
     @InjectEventLogger
     private static EventLogger eventLogger;
 
@@ -25,9 +27,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null brand attribute
+     * Checking for null brand attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillBrand(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getBrand() != null) {
             builder.setBrand(wine.getBrand());
@@ -35,9 +39,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null sparkling attribute
+     * Checking for null sparkling attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillSparkling(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getSparkling() != null ){
             builder.setSparkling(true);
@@ -45,9 +51,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null country attribute
+     * Checking for null country attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillCountry(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getCountry() != null) {
             builder.setCountry(wine.getCountry());
@@ -55,9 +63,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null capacity attribute
+     * Checking for null capacity attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillCapacity(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getCapacity() != null) {
             builder.setCapacity(wine.getCapacity());
@@ -65,9 +75,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null strength attribute
+     * Checking for null strength attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillStrength(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getStrength() != null) {
             builder.setStrength(wine.getStrength());
@@ -75,9 +87,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null color attribute
+     * Checking for null color attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillColor(ParserApi.Wine.Builder builder, ProductDTO wine) {
         ParserApi.Wine.Color color = convertColor(wine.getColor());
         if (color != null) {
@@ -86,9 +100,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null sugar attribute
+     * Checking for null sugar attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillSugar(ParserApi.Wine.Builder builder, ProductDTO wine) {
         ParserApi.Wine.Sugar sugar = convertSugar(wine.getSugar());
         if (sugar != null) {
@@ -97,9 +113,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null oldprice attribute
+     * Checking for null oldprice attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillOldPrice(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getOldPrice() != null) {
             builder.setOldPrice(wine.getOldPrice());
@@ -107,9 +125,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null image attribute
+     * Checking for null image attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillImage(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getImage() != null) {
             builder.setImage(wine.getImage());
@@ -117,9 +137,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null manufacturer attribute
+     * Checking for null manufacturer attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillManufacturer(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getManufacturer() != null) {
             builder.setManufacturer(wine.getManufacturer());
@@ -127,9 +149,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null link attribute
+     * Checking for null link attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillLink(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getLink() != null) {
             builder.setLink(wine.getLink());
@@ -137,9 +161,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null grapesort attribute
+     * Checking for null grapesort attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillGrapeSort(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getGrapeSort() != null) {
             builder.addAllGrapeSort(wine.getGrapeSort());
@@ -147,9 +173,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null gastronomy attribute
+     * Checking for null gastronomy attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillGastronomy(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getGastronomy() != null) {
             builder.setGastronomy(wine.getGastronomy());
@@ -157,9 +185,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null taste attribute
+     * Checking for null taste attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillTaste(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getTaste() != null) {
             builder.setTaste(wine.getTaste());
@@ -167,9 +197,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null flavor attribute
+     * Checking for null flavor attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillFlavor(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getFlavor() != null) {
             builder.setFlavor(wine.getFlavor());
@@ -177,9 +209,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null rating attribute
+     * Checking for null rating attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillRating(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getRating() != null) {
             builder.setRating(wine.getRating());
@@ -187,9 +221,11 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     *Checking for null title attribute
+     * Checking for null title attribute
+     *
      * @param builder builder of Wine
-     * @param  wine Wine with attributes*/
+     * @param  wine Wine with attributes
+     */
     public static void fillTitle(ParserApi.Wine.Builder builder, ProductDTO wine) {
         if (wine.getWineTitle() != null) {
             builder.setName(wine.getWineTitle());
@@ -197,16 +233,21 @@ public class ExportProductDtoListHelper {
     }
 
     /**
-     * method of  attribute color convetring
+     * Method of  attribute color convetring
+     *
      * @param  value parsed value of color
-     * @return standardized value of color*/
+     * @return standardized value of color
+     */
+
     private static ParserApi.Wine.Color convertColor(String value) {
         return Color.resolve(value);
     }
     /**
-     * method of attribute  sugar convetring
+     * Method of attribute  sugar convetring
+     *
      * @param value parsed value of sugar
-     * @return standardized value of color*/
+     * @return standardized value of color
+     */
     private static ParserApi.Wine.Sugar convertSugar(String value) {
         return Sugar.resolve(value);
     }

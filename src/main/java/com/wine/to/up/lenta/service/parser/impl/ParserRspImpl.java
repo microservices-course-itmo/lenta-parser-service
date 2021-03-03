@@ -17,7 +17,9 @@ import java.util.List;
 @Setter
 public class ParserRspImpl implements ParserRsp {
 
-    /** Array of json with wine properties */
+    /**
+     * Array of json with wine properties
+     */
     private JSONArray wines = new JSONArray();
 
     /**

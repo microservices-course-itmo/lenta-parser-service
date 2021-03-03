@@ -21,6 +21,7 @@ import java.util.Properties;
 
 @Configuration
 public class KafkaConfiguration {
+
     /**
      * List of kafka servers
      */
