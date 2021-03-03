@@ -10,18 +10,24 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/** class for standardization of color attributes */
 @Getter
 @AllArgsConstructor
 @Log4j2
 public enum Color {
 
+    /** template of red attribute */
     RED(ParserApi.Wine.Color.RED,"Красный"),
 
+    /** template of rose attribute */
     ROSE(ParserApi.Wine.Color.ROSE, "Розовый"),
 
+    /** template of white attribute */
     WHITE(ParserApi.Wine.Color.WHITE, "Белый"),
 
+    /** template of orange attribute */
     ORANGE(ParserApi.Wine.Color.ORANGE, "Оранжевый");
+
 
     private final ParserApi.Wine.Color productColor;
 
