@@ -5,8 +5,8 @@ import com.wine.to.up.commonlib.logging.NotableEvent;
 public enum LentaParserServiceNotableEvents implements NotableEvent {
     W_SOME_WARN_EVENT("Warn situation. Description: {}"),
     W_WINE_ATTRIBUTE_ABSENT("Can't set {} , url: {}"),
-    W_FIELD_PARSING_FAILED("Can't parse {} of wine {}"),
-    W_PAGE_PARSING_FAILED("Can't parse page: {}"),
+    W_WINE_DETAILS_PARSING_FAILED("Can't parse {} of wine {}"),
+    W_PAGE_PARSING_FAILED("Can't parse page."),
 
     E_CHARACTERISTICS_ERROR("Can't parse wine characteristics: {}"),
     E_NULL_DOCUMENT("Get null document: {}"),
