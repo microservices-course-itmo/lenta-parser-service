@@ -33,6 +33,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEvents.*;
 
+/**
+ * This class consists of methods of calling lenta API and parsing reserved data
+ * Also collecting metrics for all processed
+ */
 @Slf4j
 @AllArgsConstructor
 @Getter
@@ -40,40 +44,137 @@ import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEven
 @Scope(value = "prototype")
 public class ParserReqServiceImpl implements ParserReqService {
 
+    /**
+     * Metric that count parsed wines
+     */
     private static final String PARSED_WINES_COUNT = "parsed_wines_count";
+
+    /**
+     * Metric that count parsing which still in progress
+     */
     private static final String PARSING_IN_PROGRESS_GAUGE = "parsing_in_progress";
+
+    /**
+     * Metric that count summary time of parsing
+     */
     private static final String PARSING_PROCESS_DURATION_SUMMARY = "parsing_process_duration";
+
+    /**
+     * Metric that stores the time that has passed since the last prasing
+     */
     private static final String TIME_SINCE_LAST_SUCCEEDED_PARSING_GAUGE = "time_since_last_succeeded_parsing";
 
-
+    /**
+     * URL of Lenta site
+     */
     private String baseUrl;
 
+    /**
+     * URL of Lenta API
+     */
     private final String apiUrl;
 
+    /**
+     * Body for connection to API
+     */
     private final String apiBody;
 
+    /**
+     * Collector of metric
+     */
     private final LentaServiceMetricsCollector metricsCollector;
 
+    /**
+     * Counter of parsed wines
+     */
     private final AtomicInteger parsedWines = new AtomicInteger();
+
+    /**
+     * Counter of wine that parsing right now
+     */
     private final AtomicInteger parsingInProgress = new AtomicInteger(0);
+
+    /**
+     * Time when last parsing had ended successfully
+     */
     private final AtomicLong lastSucceededParsingTime = new AtomicLong(0);
 
+    /**
+     * Event logger
+     */
     @InjectEventLogger
     private EventLogger eventLogger;
 
+    /**
+     * Wine privacy - brand name
+     */
     private static final String BRAND_NAME = "Бренд";
+
+    /**
+     * Wine privacy - country_name
+     */
     private static final String COUNTRY_NAME = "Страна производителя";
+
+    /**
+     * Wine privacy - capacity name
+     */
     private static final String CAPACITY_NAME = "Литраж";
+
+    /**
+     * Wine privacy - strength name
+     */
     private static final String STRENGTH_NAME = "Крепость (%)";
+
+    /**
+     * Wine privacy - color name
+     */
     private static final String COLOR_NAME = "Цвет";
+
+    /**
+     * Wine privacy - sugar name
+     */
     private static final String SUGAR_NAME = "Содержание сахара";
+
+    /**
+     * Wine privacy - grape sort name
+     */
     private static final String GRAPE_SORT_NAME = "Сорт винограда";
+
+    /**
+     * Wine privacy - aroma name
+     */
     private static final String AROMA_NAME = "Аромат";
+
+    /**
+     * Wine privacy - gactranomy
+     */
     private static final String GACTRANOMY = "Гастрономия";
+
+    /**
+     * Wine privacy - taste
+     */
     private static final String TASTE = "Вкус";
+
+    /**
+     * Wine privacy - manufacturer
+     */
     private static final String MANUFACTURER = "Вид упаковки";
+
+    /**
+     * Wine privacy - URL of image
+     */
     private static final String IMAGEURL = "imageUrl";
 
+    /**
+     * Builder for class with metrics
+     *
+     * @param baseUrl This is base URL.
+     * @param apiUrl This is URL of Lenta API.
+     * @param apiBody This is body for connection to Lenta API.
+     * @param metricsCollector This is Collector for metrics
+     *
+     * @return an instance of the ParserReqServiceImpl.
+     */
     public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody, LentaServiceMetricsCollector metricsCollector) {
         this.baseUrl = baseUrl;
         this.apiUrl = apiUrl;
@@ -88,6 +189,15 @@ public class ParserReqServiceImpl implements ParserReqService {
         );
     }
 
+    /**
+     * Builder for class without metrics
+     *
+     * @param baseUrl This is base URL.
+     * @param apiUrl This is URL of Lenta API.
+     * @param apiBody This is body for connection to Lenta API.
+     *
+     * @return an instance of the ParserReqServiceImpl.
+     */
     public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody) {
         this.baseUrl = baseUrl;
         this.apiUrl = apiUrl;
@@ -95,6 +205,13 @@ public class ParserReqServiceImpl implements ParserReqService {
         this.metricsCollector = null;
     }
 
+    /**
+     * Method of geting data from lenta API
+     *
+     * @param batchSize This is Size of a batch.
+     *
+     * @return wineList This is array of json with parsed properties(One Json for one single wine) .
+     */
     @Timed(PARSING_PROCESS_DURATION_SUMMARY)
     public ParserRspImpl getJson(Integer batchSize) {
         eventLogger.info(I_START_PARSING);
@@ -183,7 +300,14 @@ public class ParserReqServiceImpl implements ParserReqService {
         parsedWines.set(wineList.getJsonList().size());
         return wineList;
     }
-
+    /**
+     * Method of parsing additional properties
+     *
+     * @param jsonString This is container for properties.
+     * @param document This is html page of single wine.
+     *
+     * @return jsonString.
+     */
     public JSONObject getProperties(JSONObject jsonString, Document document) {
 
         Elements elem = null;
@@ -251,6 +375,13 @@ public class ParserReqServiceImpl implements ParserReqService {
         return jsonString;
     }
 
+    /**
+     * Method of geting html
+     *
+     * @param productHtml This is URL.
+     *
+     * @return document This is html received from URL.
+     */
     public Document getItemHtml(String productHtml) {
         long startFetchingTime = new Date().getTime();
         Document document = null;

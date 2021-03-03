@@ -27,6 +27,9 @@ import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEven
 @PropertySource("classpath:lenta-site.properties")
 public class ExportProductDtoList {
 
+    /**
+     * Link Lenta website
+     */
     @Value("${site.main.url}")
     private String shopLink;
 
@@ -38,6 +41,16 @@ public class ExportProductDtoList {
     @InjectEventLogger
     private EventLogger eventLogger;
 
+    /**
+     * Builder of this class
+     *
+     * @param requestsService
+     * @param parseService
+     * @param kafkaSendMessageService
+     * @param metricsCollector
+     *
+     * @return an instance of this class
+     */
     public ExportProductDtoList(ParserReqServiceImpl requestsService, LentaWineParserServiceImpl parseService, KafkaMessageSender<ParserApi.WineParsedEvent> kafkaSendMessageService, LentaServiceMetricsCollector metricsCollector) {
         this.parseService = Objects.requireNonNull(parseService, "Can't get parseService");
         this.requestsService = Objects.requireNonNull(requestsService, "Can't get requestsService");
@@ -45,6 +58,9 @@ public class ExportProductDtoList {
         this.metricsCollector = Objects.requireNonNull(metricsCollector, "Can't get metricsCollector");
     }
 
+    /**
+     * Method that runs parsing once a day
+     */
     @Scheduled(cron = "${cron.expression}")
     public void runCronTask() {
         long startTime = new Date().getTime();
@@ -72,6 +88,13 @@ public class ExportProductDtoList {
         metricsCollector.productListJob(new Date().getTime() - startTime);
     }
 
+    /**
+     * Method that create object of wine for kafka from parsed wines
+     *
+     * @param wine - parsed from lenta website wine
+     *
+     * @return object wine for kafka
+     */
     public ParserApi.Wine getProtobufProduct(ProductDTO wine) {
         var builder = ParserApi.Wine.newBuilder();
 

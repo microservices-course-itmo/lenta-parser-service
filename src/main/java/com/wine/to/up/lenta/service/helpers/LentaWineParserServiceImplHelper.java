@@ -18,15 +18,32 @@ import static com.wine.to.up.lenta.service.logging.LentaParserServiceNotableEven
 @Slf4j
 public class LentaWineParserServiceImplHelper {
 
+    /**
+     * Wine capacity attribute
+     */
     private static final String WINECAPACITY = "wineCapacity";
 
+    /**
+     * Event logger
+     */
     @InjectEventLogger
     private static EventLogger eventLogger;
 
+    /**
+     * Builder
+     *
+     * @return an instance of this class
+     */
     private LentaWineParserServiceImplHelper() {
         throw new IllegalStateException("Class helper");
     }
 
+    /**
+     * Checking for null OldPrice attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillOldPrice(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineOldPrice")) {
             try {
@@ -39,6 +56,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null NewPrice attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillNewPrice(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineNewPrice")) {
             try {
@@ -50,6 +73,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null OldPrice attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillImageUrl(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("imageUrl")) {
             try {
@@ -61,6 +90,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine rating attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineRating(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineRating")) {
             try {
@@ -72,6 +107,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine link attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineLink(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineLink")) {
             try {
@@ -83,6 +124,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine brand attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineBrand(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineBrand")) {
             try {
@@ -94,6 +141,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine country attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineCountry(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineCountry")) {
             try {
@@ -105,6 +158,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine Aroma attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineAroma(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineAroma")) {
             try {
@@ -116,6 +175,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine sugar content attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineSugarContent(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineSugarContent")) {
             try {
@@ -127,6 +192,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine color attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineColour(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineColour")) {
             try {
@@ -138,6 +209,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine gastronomy attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineGastronomy(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineGastronomy")) {
             try {
@@ -149,6 +226,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine strenght attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineStrength(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineStrength")) {
             try {
@@ -160,6 +243,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine sparkling attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineSparkling(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineSparkling")){
             try {
@@ -176,6 +265,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine taste attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineTaste(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineTaste")) {
             try {
@@ -187,6 +282,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine title attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineTitle(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineTitle")) {
             try {
@@ -198,6 +299,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine packaging type attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWinePackagingType(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("winePackagingType")) {
             try {
@@ -209,6 +316,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine grape sort attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineGrapeSort(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has("wineGrapeSort")) {
             try {
@@ -220,6 +333,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine capacity attribute and Log error
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static void fillWineCapacity(JSONObject jsonObject, ProductDTO.ProductDTOBuilder productBuilder) {
         if (jsonObject.has(WINECAPACITY)) {
             try {
@@ -235,6 +354,12 @@ public class LentaWineParserServiceImplHelper {
         }
     }
 
+    /**
+     * Checking for null wine URL attribute
+     *
+     * @param jsonObject parsed wine
+     * @param  productBuilder DTO builder
+     */
     public static String getURL(JSONObject jsonObject){
         if (jsonObject.has("wineLink")) {
             return jsonObject.getString("wineLink");

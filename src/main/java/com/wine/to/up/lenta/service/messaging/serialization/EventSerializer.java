@@ -7,6 +7,7 @@ import org.apache.kafka.common.serialization.Serializer;
  * Serializer for {@link ParserApi.WineParsedEvent}
  */
 public class EventSerializer implements Serializer<ParserApi.WineParsedEvent> {
+
     /**
      * {@inheritDoc}
      */
