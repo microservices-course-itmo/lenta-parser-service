@@ -1,3 +1,4 @@
+-- Script before creating table (if data base not exist) in data base when application is starting
 CREATE TABLE IF NOT EXISTS wines
 (
     id    BIGSERIAL PRIMARY KEY ,

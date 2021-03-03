@@ -54,7 +54,6 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         LentaWineParserServiceImplHelper.fillWineCapacity(jsonObject, productBuilder);
         LentaWineParserServiceImplHelper.fillWineTitle(jsonObject, productBuilder);
 
-//        dataBaseService.create(productBuilder);
         return productBuilder.build();
     }
 }
