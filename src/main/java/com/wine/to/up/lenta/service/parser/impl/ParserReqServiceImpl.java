@@ -151,7 +151,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                         .put("wineRating", rating)
                         .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"))
                         .put("wineTitle", wineTitle);
-                if (jsonArr.getJSONObject(a).getString("nodeCode").equals("c529e2e61ea65b2c9f45b32b62d75a0b5")) {
+                String checkSparkling = "c529e2e61ea65b2c9f45b32b62d75a0b5";
+                if (jsonArr.getJSONObject(a).getString("nodeCode").equals(checkSparkling)) {
                     jsonString.put("wineSparkling", true);
                 } else {
                     jsonString.put("wineSparkling", false);
