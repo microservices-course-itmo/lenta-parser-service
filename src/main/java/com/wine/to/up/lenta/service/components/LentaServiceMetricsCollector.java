@@ -2,12 +2,10 @@ package com.wine.to.up.lenta.service.components;
 
 import com.wine.to.up.commonlib.metrics.CommonMetricsCollector;
 import io.micrometer.core.instrument.Metrics;
-import io.micrometer.core.instrument.Tag;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Summary;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,7 +26,7 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
     private static final String PARSING_COMPLETE_COUNTER = "parsing_complete_total";
     private static final String PARSING_STARTED_COUNTER = "parsing_started_total";
     private static final String WINES_PUBLISHED_TO_KAFKA_COUNT = "wines_published_to_kafka_count";
-    private static final String WINE_PAGE_FETCHING_DURATION_SUMMARY = "wine_page_fetching_duration";
+    private static final String WINE_PAGE_FETCHING_DURATION = "wine_page_fetching_duration";
     private static final String WINE_PAGE_PARSING_DURATION_SUMMARY = "wine_page_parsing_duration";
     private static final String WINE_DETAILS_PARSING_DURATION_SUMMARY = "wine_details_parsing_duration";
     private static final String WINE_DETAILS_FETCHING_DURATION_SUMMARY = "wine_details_fetching_duration";
@@ -66,8 +64,8 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
             .help("/csv execution time")
             .register();
 
-    private static final Summary winePageFetchingDurationSummary = Summary.build()
-            .name(WINE_PAGE_FETCHING_DURATION_SUMMARY)
+    private static final Summary prometheusWinePageFetchingDurationSummary = Summary.build()
+            .name(WINE_PAGE_FETCHING_DURATION)
             .help("wine page fetching execution time")
             .register();
 
@@ -101,10 +99,10 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
         parseSiteSummary.observe(time);
     }
 
-    public void fetchingPageDuration(long time) {
+    public void timeWinePageFetchingDuration(long time) {
         long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
-        winePageFetchingDurationSummary.observe(milliTime);
-        Metrics.summary(WINE_PAGE_FETCHING_DURATION_SUMMARY).record(milliTime);
+        prometheusWinePageFetchingDurationSummary.observe(milliTime);
+        Metrics.summary(WINE_PAGE_FETCHING_DURATION).record(milliTime);
     }
 
     public void parsingPageDuration(long time){

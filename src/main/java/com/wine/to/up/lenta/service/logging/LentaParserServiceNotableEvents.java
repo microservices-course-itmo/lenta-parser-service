@@ -23,7 +23,12 @@ public enum LentaParserServiceNotableEvents implements NotableEvent {
     /**
      * Event that tell about parsing fail
      */
-    W_PAGE_PARSING_FAILED("Can't parse page: {}"),
+    W_PAGE_PARSING_FAILED("Can't parse page."),
+  
+    /**
+     * Event that tell about dateails parsing fail
+     */
+    W_WINE_DETAILS_PARSING_FAILED("Can't parse {} of wine {}"),
 
     /**
      * Event that tell about characteristics parsing fail
