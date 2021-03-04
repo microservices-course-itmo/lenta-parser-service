@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Kafka controller
+ */
 @RestController
 @RequestMapping("/update")
 @Validated
@@ -17,8 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class SendKafkaController {
 
+    /**
+     * ExportProductDtoList
+     */
     private ExportProductDtoList exportProductDtoList;
 
+    /**
+     * Controller that start parse lenta website and send parsed wines to kafka
+     *
+     * @return http status
+     */
     @GetMapping("/parser")
     public ResponseEntity sendKafkaMessage() {
         exportProductDtoList.runCronTask();
