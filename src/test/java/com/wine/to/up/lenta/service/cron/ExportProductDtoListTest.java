@@ -29,7 +29,7 @@
 //    public void setUp() {
 //        parserReqService = mock(ParserReqServiceImpl.class);
 //        parserService = mock(LentaWineParserServiceImpl.class);
-//        when(parserReqService.getJson()).thenReturn(getParserRsp());
+//        when(parserReqService.getJson(0)).thenReturn(getParserRsp());
 //        kafkaSendMessageService = mock(KafkaMessageSender.class);
 //        lentaServiceMetricsCollector = mock(LentaServiceMetricsCollector.class);
 //

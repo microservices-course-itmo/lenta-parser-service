@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/lenta")
+@RequestMapping("/update")
 @Validated
 @Slf4j
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public class SendKafkaController {
 
     private ExportProductDtoList exportProductDtoList;
 
-    @GetMapping("/kafka")
+    @GetMapping("/parser")
     public ResponseEntity sendKafkaMessage() {
         exportProductDtoList.runCronTask();
         return new ResponseEntity<>(HttpStatus.OK);

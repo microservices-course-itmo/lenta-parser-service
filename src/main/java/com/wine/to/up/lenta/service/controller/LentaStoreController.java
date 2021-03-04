@@ -28,7 +28,7 @@ public class LentaStoreController {
     @GetMapping(name = "/json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getParserResult() {
         long startTime = new Date().getTime();
-        ParserRspImpl parserRsp = parserReqServiceImpl.getJson();
+        ParserRspImpl parserRsp = parserReqServiceImpl.getJson(60);
         metricsCollector.parseSiteJson(new Date().getTime() - startTime);
         if (parserRsp == null) {
             return new ResponseEntity<>("Parser return nothing, check internet connection or check lenta api request", HttpStatus.BAD_REQUEST);

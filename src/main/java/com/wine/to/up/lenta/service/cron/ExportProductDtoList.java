@@ -47,13 +47,11 @@ public class ExportProductDtoList {
 
     @Scheduled(cron = "${cron.expression}")
     public void runCronTask() {
-
         long startTime = new Date().getTime();
         eventLogger.info(I_START_JOB, startTime);
-
         try {
             List<ParserApi.Wine> wines = parseService
-                    .parseWineList(requestsService.getJson())
+                    .parseWineList(requestsService.getJson(new Date().getHours() * 60))
                     .stream()
                     .map(this::getProtobufProduct)
                     .collect(Collectors.toList());
@@ -66,7 +64,7 @@ public class ExportProductDtoList {
             eventLogger.info(I_KAFKA_SEND_MESSAGE_SUCCESS, message);
             kafkaSendMessageService.sendMessage(message);
             metricsCollector.incWinesSentToKafka(wines.size());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             eventLogger.error(E_PRODUCT_LIST_EXPORT_ERROR, ex);
         }
 
@@ -74,7 +72,7 @@ public class ExportProductDtoList {
         metricsCollector.productListJob(new Date().getTime() - startTime);
     }
 
-     public ParserApi.Wine getProtobufProduct(ProductDTO wine) {
+    public ParserApi.Wine getProtobufProduct(ProductDTO wine) {
         var builder = ParserApi.Wine.newBuilder();
 
         ExportProductDtoListHelper.fillBrand(builder, wine);
@@ -96,5 +94,9 @@ public class ExportProductDtoList {
         ExportProductDtoListHelper.fillTitle(builder, wine);
 
         return builder.build();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new Date().getHours());
     }
 }
