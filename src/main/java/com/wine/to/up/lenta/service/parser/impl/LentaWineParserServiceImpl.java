@@ -38,7 +38,6 @@ public class LentaWineParserServiceImpl implements LentaWineParserService {
         JSONArray productList = wineList.getWines();
         for (int i = 0; i < productList.length(); i++) {
             productDTOList.add(getProductDTO(productList.getJSONObject(i)));
-            dataBaseService.create(getProductDTO(productList.getJSONObject(i)));
         }
         return productDTOList;
     }
