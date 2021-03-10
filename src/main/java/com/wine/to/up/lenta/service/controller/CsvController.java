@@ -41,9 +41,9 @@ public class CsvController {
      */
     @GetMapping(produces = "text/csv")
     public ResponseEntity generateCsv() {
-        long startTime = new Date().getTime();
+        long startTime = System.nanoTime();
         String csv = CDL.toString(parserReqServiceImpl.getJson(60).getWines());
-        metricsCollector.parseSiteCsv(new Date().getTime() - startTime);
+        metricsCollector.parseSiteCsv(System.nanoTime() - startTime);
         return new ResponseEntity<>(csv, HttpStatus.OK);
 
     }
