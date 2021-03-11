@@ -163,7 +163,11 @@ public class ParserReqServiceImpl implements ParserReqService {
      * Wine privacy - URL of image
      */
     private static final String IMAGEURL = "imageUrl";
+    public static final String CHECK_SPARKLING = "c529e2e61ea65b2c9f45b32b62d75a0b5";
 
+    public static final String CHECK_VERMUTS = "c95dd35572e56e1a1bea8ef16f1640ff0";
+
+    public static final String CHECK_SWEET_WINES = "c5a9adffd31b3fdf7af0a1a1bf01051ea";
     /**
      * Builder for class with metrics
      *
@@ -213,7 +217,6 @@ public class ParserReqServiceImpl implements ParserReqService {
      */
     @Timed(PARSING_PROCESS_DURATION_SUMMARY)
     public ParserRspImpl getJson(Integer batchSize) {
-        int counter = 0;
         metricsCollector.incParsingStarted();
         eventLogger.info(I_START_PARSING);
         parsingInProgress.incrementAndGet();
@@ -225,6 +228,8 @@ public class ParserReqServiceImpl implements ParserReqService {
 
         JSONArray jsonArr = new JSONArray(apiBody);
         for (int a = 0; a < jsonArr.length(); a++) {
+
+            int tempBatchSize = batchSize;
             long startFetchingTime = System.nanoTime();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
@@ -245,12 +250,31 @@ public class ParserReqServiceImpl implements ParserReqService {
             JSONObject jsonObject = new JSONObject(response.body().toString());
             JSONArray array = jsonObject.getJSONArray("skus");
             long startParsingingTime = System.nanoTime();
+
+            String nodeCode = jsonArr.getJSONObject(a).getString("nodeCode");
+
+            switch (nodeCode){
+                case CHECK_SPARKLING:
+                    if (tempBatchSize > array.length()) {
+                        tempBatchSize = tempBatchSize / 4;
+                }
+                    break;
+                case CHECK_SWEET_WINES:
+                    if (tempBatchSize > array.length()) {
+                        tempBatchSize = tempBatchSize & array.length();
+                    }
+                    break;
+                case CHECK_VERMUTS:
+                    if (tempBatchSize > array.length()) {
+                        tempBatchSize = tempBatchSize & array.length();
+                    }
+                    break;
+            }
             for (int i = 0; i < array.length(); i++) {
 
-                if (batchSize != null && (i < batchSize || i >= batchSize + 60)) {
+                if (i < tempBatchSize || i >= tempBatchSize + 6) {
                     continue;
                 }
-                counter++;
 
                 Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                 Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
@@ -270,8 +294,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                         .put("wineRating", rating)
                         .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"))
                         .put("wineTitle", wineTitle);
-                String checkSparkling = "c529e2e61ea65b2c9f45b32b62d75a0b5";
-                if (jsonArr.getJSONObject(a).getString("nodeCode").equals(checkSparkling)) {
+
+                if (jsonArr.getJSONObject(a).getString("nodeCode").equals(CHECK_SPARKLING)) {
                     jsonString.put("wineSparkling", true);
                 } else {
                     jsonString.put("wineSparkling", false);
@@ -289,22 +313,23 @@ public class ParserReqServiceImpl implements ParserReqService {
 
                 long startParsingTime = System.nanoTime();
                 JSONObject wine = getProperties(jsonString, document);
-                if (wine != null){
-                    wineList.add(wine);
-                }
+
+                wineList.add(wine);
+
                 metricsCollector.parsingDetailsDuration(System.nanoTime() - startParsingTime);
 
                 eventLogger.info(I_WINE_DETAILS_PARSED, jsonString);
 
 
-                if (wineList.getJsonList().size() % 20 == 0) {
+                if (wineList.getJsonList().size() % 8 == 0) {
                     eventLogger.info(I_WINES_PAGE_PARSED);
                     metricsCollector.parsingPageDuration(System.nanoTime() - startParsingingTime);
                 }
             }
-            if (wineList.getJsonList().size() % 60 != 0){
-                eventLogger.info(W_PAGE_PARSING_FAILED);
-            }
+        }
+
+        if (wineList.getJsonList().size() % 8 != 0){
+            eventLogger.info(W_PAGE_PARSING_FAILED);
         }
 
         metricsCollector.countParsingComplete("SUCCESS");
@@ -330,6 +355,7 @@ public class ParserReqServiceImpl implements ParserReqService {
             elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
         } catch (NullPointerException ex) {
             eventLogger.error(E_NULL_DOCUMENT, ex);
+            eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
             return jsonString;
         }
         for (Element element : elem) {
@@ -339,7 +365,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 iterdoc = Jsoup.parse(element.toString());
             } catch (Exception ex) {
                 eventLogger.warn(W_SOME_WARN_EVENT, element.toString(), jsonString.getString("wineLink"));
-                return null;
+                return jsonString;
             }
             if (iterdoc == null) {
                 eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
@@ -348,6 +374,7 @@ public class ParserReqServiceImpl implements ParserReqService {
             String title = iterdoc.getElementsByClass("sku-card-tab-params__label-block").text();
             Elements value = iterdoc.getElementsByClass("sku-card-tab-params__value");
             if (value.isEmpty()) {
+                eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
                 value = iterdoc.getElementsByClass("link sku-card-tab-params__link");
             }
 

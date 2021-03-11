@@ -67,7 +67,7 @@ public class ExportProductDtoList {
         eventLogger.info(I_START_JOB, startTime);
         try {
             List<ParserApi.Wine> wines = parseService
-                    .parseWineList(requestsService.getJson(new Date().getHours() * 60))
+                    .parseWineList(requestsService.getJson(new Date().getHours() * 60 + new Date().getMinutes()))
                     .stream()
                     .map(this::getProtobufProduct)
                     .collect(Collectors.toList());
@@ -115,6 +115,7 @@ public class ExportProductDtoList {
         ExportProductDtoListHelper.fillFlavor(builder, wine);
         ExportProductDtoListHelper.fillRating(builder, wine);
         ExportProductDtoListHelper.fillTitle(builder, wine);
+        ExportProductDtoListHelper.fillNewPrice(builder, wine);
 
         return builder.build();
     }

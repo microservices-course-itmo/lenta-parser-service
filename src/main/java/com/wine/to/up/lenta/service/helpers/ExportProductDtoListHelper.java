@@ -125,6 +125,18 @@ public class ExportProductDtoListHelper {
     }
 
     /**
+     * Checking for null new price attribute
+     *
+     * @param builder builder of Wine
+     * @param  wine Wine with attributes
+     */
+    public static void fillNewPrice(ParserApi.Wine.Builder builder, ProductDTO wine) {
+        if (wine.getNewPrice() != null) {
+            builder.setNewPrice(wine.getNewPrice());
+        }
+    }
+
+    /**
      * Checking for null image attribute
      *
      * @param builder builder of Wine
