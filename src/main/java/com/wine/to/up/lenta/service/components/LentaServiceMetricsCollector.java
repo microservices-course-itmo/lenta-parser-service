@@ -26,10 +26,10 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
     private static final String PARSING_COMPLETE_COUNTER = "parsing_complete_total";
     private static final String PARSING_STARTED_COUNTER = "parsing_started_total";
     private static final String WINES_PUBLISHED_TO_KAFKA_COUNT = "wines_published_to_kafka_count";
-    private static final String WINE_PAGE_FETCHING_DURATION = "wine_page_fetching_duration";
-    private static final String WINE_PAGE_PARSING_DURATION_SUMMARY = "wine_page_parsing_duration";
-    private static final String WINE_DETAILS_PARSING_DURATION_SUMMARY = "wine_details_parsing_duration";
-    private static final String WINE_DETAILS_FETCHING_DURATION_SUMMARY = "wine_details_fetching_duration";
+    private static final String WINE_PAGE_FETCHING_DURATION = "wine_page_fetching_duration_seconds";
+    private static final String WINE_PAGE_PARSING_DURATION_SUMMARY = "wine_page_parsing_duration_seconds";
+    private static final String WINE_DETAILS_PARSING_DURATION_SUMMARY = "wine_details_parsing_duration_seconds";
+    private static final String WINE_DETAILS_FETCHING_DURATION_SUMMARY = "wine_details_fetching_duration_seconds";
 
     private static final String PARSING_COMPLETE_STATUS_TAG = "status";
 

@@ -24,7 +24,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Date;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -164,7 +163,11 @@ public class ParserReqServiceImpl implements ParserReqService {
      * Wine privacy - URL of image
      */
     private static final String IMAGEURL = "imageUrl";
+    public static final String CHECK_SPARKLING = "c529e2e61ea65b2c9f45b32b62d75a0b5";
 
+    public static final String CHECK_VERMUTS = "c95dd35572e56e1a1bea8ef16f1640ff0";
+
+    public static final String CHECK_SWEET_WINES = "c5a9adffd31b3fdf7af0a1a1bf01051ea";
     /**
      * Builder for class with metrics
      *
@@ -214,7 +217,9 @@ public class ParserReqServiceImpl implements ParserReqService {
      */
     @Timed(PARSING_PROCESS_DURATION_SUMMARY)
     public ParserRspImpl getJson(Integer batchSize) {
+        metricsCollector.incParsingStarted();
         eventLogger.info(I_START_PARSING);
+        parsingInProgress.incrementAndGet();
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
@@ -223,7 +228,9 @@ public class ParserReqServiceImpl implements ParserReqService {
 
         JSONArray jsonArr = new JSONArray(apiBody);
         for (int a = 0; a < jsonArr.length(); a++) {
-            long startFetchingTime = new Date().getTime();
+
+            int tempBatchSize = batchSize;
+            long startFetchingTime = System.nanoTime();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
                     .header("Content-Type", "application/json")
@@ -237,19 +244,38 @@ public class ParserReqServiceImpl implements ParserReqService {
                 eventLogger.error(E_BAD_REQUEST, response.statusCode(), e);
                 parsedWines.set(wineList.getJsonList().size());
                 return null;
-            } finally {
-                metricsCollector.timeWinePageFetchingDuration(new Date().getTime() - startFetchingTime);
             }
+            metricsCollector.timeWinePageFetchingDuration(System.nanoTime() - startFetchingTime);
 
             JSONObject jsonObject = new JSONObject(response.body().toString());
             JSONArray array = jsonObject.getJSONArray("skus");
-            long startParsingingTime = new Date().getTime();
+            long startParsingingTime = System.nanoTime();
+
+            String nodeCode = jsonArr.getJSONObject(a).getString("nodeCode");
+
+            switch (nodeCode){
+                case CHECK_SPARKLING:
+                    if (tempBatchSize > array.length()) {
+                        tempBatchSize = tempBatchSize / 4;
+                }
+                    break;
+                case CHECK_SWEET_WINES:
+                    if (tempBatchSize > array.length()) {
+                        tempBatchSize = tempBatchSize & array.length();
+                    }
+                    break;
+                case CHECK_VERMUTS:
+                    if (tempBatchSize > array.length()) {
+                        tempBatchSize = tempBatchSize & array.length();
+                    }
+                    break;
+            }
             for (int i = 0; i < array.length(); i++) {
-                if (batchSize != null && (i < batchSize || i >= batchSize + 60)) {
+
+                if (i < tempBatchSize || i >= tempBatchSize + 6) {
                     continue;
                 }
-                parsingInProgress.incrementAndGet();
-                metricsCollector.incParsingStarted();
+
                 Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                 Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
                 String wineTitle = array.getJSONObject(i).getString("title");
@@ -268,8 +294,8 @@ public class ParserReqServiceImpl implements ParserReqService {
                         .put("wineRating", rating)
                         .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"))
                         .put("wineTitle", wineTitle);
-                String checkSparkling = "c529e2e61ea65b2c9f45b32b62d75a0b5";
-                if (jsonArr.getJSONObject(a).getString("nodeCode").equals(checkSparkling)) {
+
+                if (jsonArr.getJSONObject(a).getString("nodeCode").equals(CHECK_SPARKLING)) {
                     jsonString.put("wineSparkling", true);
                 } else {
                     jsonString.put("wineSparkling", false);
@@ -278,26 +304,36 @@ public class ParserReqServiceImpl implements ParserReqService {
                         .append(baseUrl)
                         .append(array.getJSONObject(i).getString("skuUrl"));
 
-                Document document = getItemHtml(String.valueOf(productHtml));
+                Document document = null;
+                try {
+                    document = getItemHtml(String.valueOf(productHtml));
+                } catch (IOException e) {
+                    eventLogger.warn(W_SOME_WARN_EVENT, e);
+                }
 
-                long startParsingTime = new Date().getTime();
-                wineList.add(getProperties(jsonString, document));
-                metricsCollector.parsingDetailsDuration(new Date().getTime() - startParsingTime);
+                long startParsingTime = System.nanoTime();
+                JSONObject wine = getProperties(jsonString, document);
+
+                wineList.add(wine);
+
+                metricsCollector.parsingDetailsDuration(System.nanoTime() - startParsingTime);
 
                 eventLogger.info(I_WINE_DETAILS_PARSED, jsonString);
-                parsingInProgress.decrementAndGet();
-                metricsCollector.countParsingComplete("SUCCESS");
 
-                if (wineList.getJsonList().size() % 20 == 0) {
-                    eventLogger.info(I_WINES_PAGE_PARSED, wineList.getWines());
-                    metricsCollector.parsingPageDuration(new Date().getTime() - startParsingingTime);
+
+                if (wineList.getJsonList().size() % 8 == 0) {
+                    eventLogger.info(I_WINES_PAGE_PARSED);
+                    metricsCollector.parsingPageDuration(System.nanoTime() - startParsingingTime);
                 }
             }
-            if (wineList.getJsonList().size() < 60) {
-                eventLogger.warn(W_PAGE_PARSING_FAILED);
-                metricsCollector.countParsingComplete("FAILED");
-            }
         }
+
+        if (wineList.getJsonList().size() % 8 != 0){
+            eventLogger.info(W_PAGE_PARSING_FAILED);
+        }
+
+        metricsCollector.countParsingComplete("SUCCESS");
+        parsingInProgress.decrementAndGet();
 
         eventLogger.info(I_WINES_PARSED, wineList.getJsonList().size());
         lastSucceededParsingTime.set(System.currentTimeMillis());
@@ -314,66 +350,70 @@ public class ParserReqServiceImpl implements ParserReqService {
      */
     public JSONObject getProperties(JSONObject jsonString, Document document) {
 
-        Elements elem = null;
+        Elements elem;
         try {
             elem = Objects.requireNonNull(document).getElementsByClass("sku-card-tab-params__item");
         } catch (NullPointerException ex) {
             eventLogger.error(E_NULL_DOCUMENT, ex);
+            eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
             return jsonString;
-        } finally {
-            for (Element element : elem) {
-                Document iterdoc = null;
+        }
+        for (Element element : elem) {
+            Document iterdoc;
 
-                try {
-                    iterdoc = Jsoup.parse(element.toString());
-                } catch (Exception ex) {
-                    eventLogger.warn(W_WINE_DETAILS_PARSING_FAILED, element.toString(), jsonString.getString("wineLink"));
-                } finally {
+            try {
+                iterdoc = Jsoup.parse(element.toString());
+            } catch (Exception ex) {
+                eventLogger.warn(W_SOME_WARN_EVENT, element.toString(), jsonString.getString("wineLink"));
+                return jsonString;
+            }
+            if (iterdoc == null) {
+                eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
+            }
 
-                    String title = iterdoc.getElementsByClass("sku-card-tab-params__label-block").text();
-                    Elements value = iterdoc.getElementsByClass("sku-card-tab-params__value");
-                    if (value.isEmpty()) {
-                        value = iterdoc.getElementsByClass("link sku-card-tab-params__link");
-                    }
+            String title = iterdoc.getElementsByClass("sku-card-tab-params__label-block").text();
+            Elements value = iterdoc.getElementsByClass("sku-card-tab-params__value");
+            if (value.isEmpty()) {
+                eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
+                value = iterdoc.getElementsByClass("link sku-card-tab-params__link");
+            }
 
-                    switch (title) {
-                        case BRAND_NAME:
-                            jsonString.put("wineBrand", value.text());
-                            break;
-                        case COUNTRY_NAME:
-                            jsonString.put("wineCountry", value.text());
-                            break;
-                        case GACTRANOMY:
-                            jsonString.put("wineGastronomy", value.text());
-                            break;
-                        case CAPACITY_NAME:
-                            jsonString.put("wineCapacity", value.text().replace(" L", ""));
-                            break;
-                        case STRENGTH_NAME:
-                            jsonString.put("wineStrength", Float.parseFloat(value.text()));
-                            break;
-                        case COLOR_NAME:
-                            jsonString.put("wineColour", value.text());
-                            break;
-                        case SUGAR_NAME:
-                            jsonString.put("wineSugarContent", value.text());
-                            break;
-                        case GRAPE_SORT_NAME:
-                            jsonString.put("wineGrapeSort", value.text());
-                            break;
-                        case AROMA_NAME:
-                            jsonString.put("wineAroma", value.text());
-                            break;
-                        case TASTE:
-                            jsonString.put("wineTaste", value.text());
-                            break;
-                        case MANUFACTURER:
-                            jsonString.put("winePackagingType", value.text());
-                            break;
-                        default:
-                            break;
-                    }
-                }
+            switch (title) {
+                case BRAND_NAME:
+                    jsonString.put("wineBrand", value.text());
+                    break;
+                case COUNTRY_NAME:
+                    jsonString.put("wineCountry", value.text());
+                    break;
+                case GACTRANOMY:
+                    jsonString.put("wineGastronomy", value.text());
+                    break;
+                case CAPACITY_NAME:
+                    jsonString.put("wineCapacity", value.text().replace(" L", ""));
+                    break;
+                case STRENGTH_NAME:
+                    jsonString.put("wineStrength", Float.parseFloat(value.text()));
+                    break;
+                case COLOR_NAME:
+                    jsonString.put("wineColour", value.text());
+                    break;
+                case SUGAR_NAME:
+                    jsonString.put("wineSugarContent", value.text());
+                    break;
+                case GRAPE_SORT_NAME:
+                    jsonString.put("wineGrapeSort", value.text());
+                    break;
+                case AROMA_NAME:
+                    jsonString.put("wineAroma", value.text());
+                    break;
+                case TASTE:
+                    jsonString.put("wineTaste", value.text());
+                    break;
+                case MANUFACTURER:
+                    jsonString.put("winePackagingType", value.text());
+                    break;
+                default:
+                    break;
             }
         }
         return jsonString;
@@ -386,20 +426,16 @@ public class ParserReqServiceImpl implements ParserReqService {
      *
      * @return document This is html received from URL.
      */
-    public Document getItemHtml(String productHtml) {
-        long startFetchingTime = new Date().getTime();
-        Document document = null;
-        try {
-            document = Jsoup.connect(String.valueOf(productHtml))
-                    .header("Accept-Encoding", "gzip, deflate")
-                    .userAgent("Opera")
-                    .maxBodySize(0)
-                    .timeout(15000)
-                    .get();
-        } catch (IOException e) {
-            eventLogger.warn(W_WINE_DETAILS_PARSING_FAILED, e);
-        }
-        metricsCollector.fetchingDetailsDuration(new Date().getTime() - startFetchingTime);
+
+    public Document getItemHtml(String productHtml) throws IOException {
+        long startFetchingTime = System.nanoTime();
+        Document document = Jsoup.connect(String.valueOf(productHtml))
+                .header("Accept-Encoding", "gzip, deflate")
+                .userAgent("Opera")
+                .maxBodySize(0)
+                .timeout(15000)
+                .get();
+        metricsCollector.fetchingDetailsDuration(System.nanoTime() - startFetchingTime);
         return document;
     }
 }
