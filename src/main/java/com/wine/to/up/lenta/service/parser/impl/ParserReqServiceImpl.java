@@ -237,13 +237,17 @@ public class ParserReqServiceImpl implements ParserReqService {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonArr.getJSONObject(a).toString()))
                     .build();
 
-            HttpResponse<?> response = null;
+            HttpResponse<?> response;
             try {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
             } catch (Exception e) {
-                eventLogger.error(E_BAD_REQUEST, response.statusCode(), e);
+                eventLogger.error(E_BAD_REQUEST, e);
                 parsedWines.set(wineList.getJsonList().size());
+                eventLogger.info(W_PAGE_PARSING_FAILED);
                 return null;
+            }
+            if (response == null){
+                eventLogger.info(W_PAGE_PARSING_FAILED);
             }
             metricsCollector.timeWinePageFetchingDuration(System.nanoTime() - startFetchingTime);
 
@@ -328,10 +332,6 @@ public class ParserReqServiceImpl implements ParserReqService {
             }
         }
 
-        if (wineList.getJsonList().size() % 8 != 0){
-            eventLogger.info(W_PAGE_PARSING_FAILED);
-        }
-
         metricsCollector.countParsingComplete("SUCCESS");
         parsingInProgress.decrementAndGet();
 
@@ -374,7 +374,6 @@ public class ParserReqServiceImpl implements ParserReqService {
             String title = iterdoc.getElementsByClass("sku-card-tab-params__label-block").text();
             Elements value = iterdoc.getElementsByClass("sku-card-tab-params__value");
             if (value.isEmpty()) {
-                eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
                 value = iterdoc.getElementsByClass("link sku-card-tab-params__link");
             }
 
