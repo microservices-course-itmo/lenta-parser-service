@@ -100,29 +100,29 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
     }
 
     public void timeWinePageFetchingDuration(long time) {
-        long milliTime = TimeUnit.NANOSECONDS.toSeconds(time);
+        long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
         prometheusWinePageFetchingDurationSummary.observe(milliTime);
         Metrics.summary(WINE_PAGE_FETCHING_DURATION).record(milliTime);
     }
 
     public void parsingPageDuration(long time){
-        long milliTime = TimeUnit.NANOSECONDS.toSeconds(time);
+        long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
         winePageParsingDurationSummary.observe(milliTime);
         Metrics.summary(WINE_PAGE_PARSING_DURATION_SUMMARY).record(milliTime);
 
     }
 
     public void fetchingDetailsDuration(long time) {
-        long milliTime = TimeUnit.NANOSECONDS.toSeconds(time);
+        long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
         wineDetailsFetchingDurationSummary.observe(milliTime);
         Metrics.summary(WINE_DETAILS_FETCHING_DURATION_SUMMARY).record(milliTime);
 
     }
 
     public void parsingDetailsDuration(long time){
-        long milliTime = TimeUnit.NANOSECONDS.toSeconds(time);
+        long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
         wineDetailsParsingDurationSummary.observe(milliTime);
-        Metrics.summary(WINE_DETAILS_PARSING_DURATION_SUMMARY).record(time);
+        Metrics.summary(WINE_DETAILS_PARSING_DURATION_SUMMARY).record(milliTime);
     }
 
     public void countParsingComplete(String status) {
