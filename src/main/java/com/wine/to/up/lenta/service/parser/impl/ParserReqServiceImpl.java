@@ -163,11 +163,14 @@ public class ParserReqServiceImpl implements ParserReqService {
      * Wine privacy - URL of image
      */
     private static final String IMAGEURL = "imageUrl";
-    public static final String CHECK_SPARKLING = "c529e2e61ea65b2c9f45b32b62d75a0b5";
 
-    public static final String CHECK_VERMUTS = "c95dd35572e56e1a1bea8ef16f1640ff0";
+    private static final Integer PAGE_COUNT = 4;
 
-    public static final String CHECK_SWEET_WINES = "c5a9adffd31b3fdf7af0a1a1bf01051ea";
+    private static final String CHECK_SPARKLING = "c529e2e61ea65b2c9f45b32b62d75a0b5";
+
+    private static final String CHECK_VERMUTS = "c95dd35572e56e1a1bea8ef16f1640ff0";
+
+    private static final String CHECK_SWEET_WINES = "c5a9adffd31b3fdf7af0a1a1bf01051ea";
     /**
      * Builder for class with metrics
      *
@@ -237,19 +240,22 @@ public class ParserReqServiceImpl implements ParserReqService {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonArr.getJSONObject(a).toString()))
                     .build();
 
-            HttpResponse<?> response = null;
+            HttpResponse<?> response;
             try {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
             } catch (Exception e) {
-                eventLogger.error(E_BAD_REQUEST, response.statusCode(), e);
+                eventLogger.error(E_BAD_REQUEST, e);
                 parsedWines.set(wineList.getJsonList().size());
+                eventLogger.info(W_PAGE_PARSING_FAILED);
                 return null;
+            }
+            if (response == null){
+                eventLogger.info(W_PAGE_PARSING_FAILED);
             }
             metricsCollector.timeWinePageFetchingDuration(System.nanoTime() - startFetchingTime);
 
             JSONObject jsonObject = new JSONObject(response.body().toString());
             JSONArray array = jsonObject.getJSONArray("skus");
-            long startParsingingTime = System.nanoTime();
 
             String nodeCode = jsonArr.getJSONObject(a).getString("nodeCode");
 
@@ -257,7 +263,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 case CHECK_SPARKLING:
                     if (tempBatchSize > array.length()) {
                         tempBatchSize = tempBatchSize / 4;
-                }
+                    }
                     break;
                 case CHECK_SWEET_WINES:
                     if (tempBatchSize > array.length()) {
@@ -266,13 +272,14 @@ public class ParserReqServiceImpl implements ParserReqService {
                     break;
                 case CHECK_VERMUTS:
                     if (tempBatchSize > array.length()) {
-                        tempBatchSize = tempBatchSize & array.length();
+                        tempBatchSize = tempBatchSize % array.length();
                     }
                     break;
             }
             for (int i = 0; i < array.length(); i++) {
-
-                if (i < tempBatchSize || i >= tempBatchSize + 6) {
+                long startParsingTime = System.nanoTime();
+                long startPageParsingTime = startParsingTime;
+                if (i < tempBatchSize || i >= tempBatchSize + 4) {
                     continue;
                 }
 
@@ -311,7 +318,6 @@ public class ParserReqServiceImpl implements ParserReqService {
                     eventLogger.warn(W_SOME_WARN_EVENT, e);
                 }
 
-                long startParsingTime = System.nanoTime();
                 JSONObject wine = getProperties(jsonString, document);
 
                 wineList.add(wine);
@@ -321,14 +327,14 @@ public class ParserReqServiceImpl implements ParserReqService {
                 eventLogger.info(I_WINE_DETAILS_PARSED, jsonString);
 
 
-                if (wineList.getJsonList().size() % 8 == 0) {
+                if (wineList.getJsonList().size() % PAGE_COUNT == 0) {
                     eventLogger.info(I_WINES_PAGE_PARSED);
-                    metricsCollector.parsingPageDuration(System.nanoTime() - startParsingingTime);
+                    metricsCollector.parsingPageDuration(System.nanoTime() - startPageParsingTime);
                 }
             }
         }
 
-        if (wineList.getJsonList().size() % 8 != 0){
+        if (wineList.getJsonList().size() % PAGE_COUNT != 0) {
             eventLogger.info(W_PAGE_PARSING_FAILED);
         }
 

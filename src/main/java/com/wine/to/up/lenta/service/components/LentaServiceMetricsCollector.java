@@ -122,7 +122,7 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
     public void parsingDetailsDuration(long time){
         long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
         wineDetailsParsingDurationSummary.observe(milliTime);
-        Metrics.summary(WINE_DETAILS_PARSING_DURATION_SUMMARY).record(time);
+        Metrics.summary(WINE_DETAILS_PARSING_DURATION_SUMMARY).record(milliTime);
     }
 
     public void countParsingComplete(String status) {
