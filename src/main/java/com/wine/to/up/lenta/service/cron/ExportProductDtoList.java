@@ -66,8 +66,9 @@ public class ExportProductDtoList {
         long startTime = new Date().getTime();
         eventLogger.info(I_START_JOB, startTime);
         try {
+            Integer batchSize = new Date().getHours() * 60 + new Date().getMinutes();
             List<ParserApi.Wine> wines = parseService
-                    .parseWineList(requestsService.getJson(new Date().getHours() * 60 + new Date().getMinutes()))
+                    .parseWineList(requestsService.getJson(batchSize))
                     .stream()
                     .map(this::getProtobufProduct)
                     .collect(Collectors.toList());
