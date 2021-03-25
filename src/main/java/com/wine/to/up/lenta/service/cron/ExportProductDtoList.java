@@ -10,7 +10,6 @@ import com.wine.to.up.lenta.service.helpers.ExportProductDtoListHelper;
 import com.wine.to.up.lenta.service.parser.impl.LentaWineParserServiceImpl;
 import com.wine.to.up.lenta.service.parser.impl.ParserReqServiceImpl;
 import com.wine.to.up.parser.common.api.schema.ParserApi;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -99,29 +98,8 @@ public class ExportProductDtoList {
     public ParserApi.Wine getProtobufProduct(ProductDTO wine) {
         var builder = ParserApi.Wine.newBuilder();
 
-        ExportProductDtoListHelper.fillBrand(builder, wine);
-        ExportProductDtoListHelper.fillSparkling(builder, wine);
-        ExportProductDtoListHelper.fillCountry(builder, wine);
-        ExportProductDtoListHelper.fillCapacity(builder, wine);
-        ExportProductDtoListHelper.fillStrength(builder, wine);
-        ExportProductDtoListHelper.fillColor(builder, wine);
-        ExportProductDtoListHelper.fillSugar(builder, wine);
-        ExportProductDtoListHelper.fillOldPrice(builder, wine);
-        ExportProductDtoListHelper.fillImage(builder, wine);
-        ExportProductDtoListHelper.fillManufacturer(builder, wine);
-        ExportProductDtoListHelper.fillLink(builder, wine);
-        ExportProductDtoListHelper.fillGrapeSort(builder, wine);
-        ExportProductDtoListHelper.fillGastronomy(builder, wine);
-        ExportProductDtoListHelper.fillTaste(builder, wine);
-        ExportProductDtoListHelper.fillFlavor(builder, wine);
-        ExportProductDtoListHelper.fillRating(builder, wine);
-        ExportProductDtoListHelper.fillTitle(builder, wine);
-        ExportProductDtoListHelper.fillNewPrice(builder, wine);
+        ExportProductDtoListHelper.fillBuilder(builder, wine);
 
         return builder.build();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new Date().getHours());
     }
 }

@@ -258,34 +258,22 @@ public class ParserReqServiceImpl implements ParserReqService {
             JSONArray array = jsonObject.getJSONArray("skus");
 
             String nodeCode = jsonArr.getJSONObject(a).getString("nodeCode");
+            String cityCode = jsonArr.getJSONObject(a).getString("storeId");
 
-            switch (nodeCode) {
-                case CHECK_SPARKLING:
-                    if (tempBatchSize > array.length()) {
-                        tempBatchSize = tempBatchSize / 4;
-                    }
-                    break;
-                case CHECK_SWEET_WINES:
-                    if (tempBatchSize > array.length()) {
-                        tempBatchSize = tempBatchSize & array.length();
-                    }
-                    break;
-                case CHECK_VERMUTS:
-                    if (tempBatchSize > array.length()) {
-                        tempBatchSize = tempBatchSize % array.length();
-                    }
-                    break;
-            }
+            tempBatchSize = getTempBatchSize(tempBatchSize, array, nodeCode);
+            String cityName = getCityName(cityCode);
+
             for (int i = 0; i < array.length(); i++) {
                 long startParsingTime = System.nanoTime();
                 long startPageParsingTime = startParsingTime;
-                if (i < tempBatchSize || i >= tempBatchSize + MAX_BATCH_SIZE) {
+                if (i < tempBatchSize || i >= tempBatchSize + 3) {
                     continue;
                 }
 
                 Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                 Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
                 String wineTitle = array.getJSONObject(i).getString("title");
+                Integer wineCount = array.getJSONObject(i).getInt("stock");
                 String imageUrl = null;
 
                 if (array.getJSONObject(i).has(IMAGEURL)) {
@@ -300,7 +288,9 @@ public class ParserReqServiceImpl implements ParserReqService {
                         .put("wineNewPrice", wineNewPrice)
                         .put("wineRating", rating)
                         .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"))
-                        .put("wineTitle", wineTitle);
+                        .put("wineTitle", wineTitle)
+                        .put("count", wineCount)
+                        .put("cityName", cityName);
 
                 if (jsonArr.getJSONObject(a).getString("nodeCode").equals(CHECK_SPARKLING)) {
                     jsonString.put("wineSparkling", true);
@@ -332,10 +322,6 @@ public class ParserReqServiceImpl implements ParserReqService {
                     metricsCollector.parsingPageDuration(System.nanoTime() - startPageParsingTime);
                 }
             }
-        }
-
-        if (wineList.getJsonList().size() % PAGE_COUNT != 0) {
-            eventLogger.info(W_PAGE_PARSING_FAILED);
         }
 
         metricsCollector.countParsingComplete("SUCCESS");
@@ -380,7 +366,6 @@ public class ParserReqServiceImpl implements ParserReqService {
             String title = iterDoc.getElementsByClass("sku-card-tab-params__label-block").text();
             Elements value = iterDoc.getElementsByClass("sku-card-tab-params__value");
             if (value.isEmpty()) {
-                eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
                 value = iterDoc.getElementsByClass("link sku-card-tab-params__link");
             }
 
@@ -442,5 +427,41 @@ public class ParserReqServiceImpl implements ParserReqService {
                 .get();
         metricsCollector.fetchingDetailsDuration(System.nanoTime() - startFetchingTime);
         return document;
+    }
+
+    private int getTempBatchSize(int tempBatchSize, JSONArray array, String nodeCode) {
+        switch (nodeCode){
+            case CHECK_SPARKLING:
+                if (tempBatchSize > array.length()) {
+                    tempBatchSize = tempBatchSize / 4;
+                }
+                break;
+            case CHECK_SWEET_WINES:
+                if (tempBatchSize > array.length()) {
+                    tempBatchSize = tempBatchSize & array.length();
+                }
+                break;
+            case CHECK_VERMUTS:
+                if (tempBatchSize > array.length()) {
+                    tempBatchSize = tempBatchSize % array.length();
+                }
+                break;
+        }
+        return tempBatchSize;
+    }
+
+    private String getCityName(String cityCode) {
+        String cityName;
+        switch (cityCode){
+            case "0183":
+                cityName = "Москва";
+                break;
+            case "0009":
+                cityName = "Санкт-Петербург";
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + cityCode);
+        }
+        return cityName;
     }
 }

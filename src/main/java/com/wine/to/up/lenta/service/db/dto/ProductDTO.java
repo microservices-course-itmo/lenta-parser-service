@@ -105,4 +105,14 @@ public class ProductDTO {
      * Title of wine
      */
     private String wineTitle;
+
+    /**
+     * Wines stocks in store
+     */
+    private Integer inStock;
+
+    /**
+     * City od the store
+     */
+    private String city;
 }
