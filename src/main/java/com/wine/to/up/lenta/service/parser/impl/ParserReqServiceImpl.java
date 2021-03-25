@@ -171,14 +171,16 @@ public class ParserReqServiceImpl implements ParserReqService {
     private static final String CHECK_VERMUTS = "c95dd35572e56e1a1bea8ef16f1640ff0";
 
     private static final String CHECK_SWEET_WINES = "c5a9adffd31b3fdf7af0a1a1bf01051ea";
+
+    private static final Integer MAX_BATCH_SIZE = 4;
+
     /**
      * Builder for class with metrics
      *
-     * @param baseUrl This is base URL.
-     * @param apiUrl This is URL of Lenta API.
-     * @param apiBody This is body for connection to Lenta API.
+     * @param baseUrl          This is base URL.
+     * @param apiUrl           This is URL of Lenta API.
+     * @param apiBody          This is body for connection to Lenta API.
      * @param metricsCollector This is Collector for metrics
-     *
      * @return an instance of the ParserReqServiceImpl.
      */
     public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody, LentaServiceMetricsCollector metricsCollector) {
@@ -199,9 +201,8 @@ public class ParserReqServiceImpl implements ParserReqService {
      * Builder for class without metrics
      *
      * @param baseUrl This is base URL.
-     * @param apiUrl This is URL of Lenta API.
+     * @param apiUrl  This is URL of Lenta API.
      * @param apiBody This is body for connection to Lenta API.
-     *
      * @return an instance of the ParserReqServiceImpl.
      */
     public ParserReqServiceImpl(String baseUrl, String apiUrl, String apiBody) {
@@ -215,7 +216,6 @@ public class ParserReqServiceImpl implements ParserReqService {
      * Method of geting data from lenta API
      *
      * @param batchSize This is Size of a batch.
-     *
      * @return wineList This is array of json with parsed properties(One Json for one single wine) .
      */
     @Timed(PARSING_PROCESS_DURATION_SUMMARY)
@@ -249,7 +249,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 eventLogger.info(W_PAGE_PARSING_FAILED);
                 return null;
             }
-            if (response == null){
+            if (response == null) {
                 eventLogger.info(W_PAGE_PARSING_FAILED);
             }
             metricsCollector.timeWinePageFetchingDuration(System.nanoTime() - startFetchingTime);
@@ -258,34 +258,22 @@ public class ParserReqServiceImpl implements ParserReqService {
             JSONArray array = jsonObject.getJSONArray("skus");
 
             String nodeCode = jsonArr.getJSONObject(a).getString("nodeCode");
+            String cityCode = jsonArr.getJSONObject(a).getString("storeId");
 
-            switch (nodeCode){
-                case CHECK_SPARKLING:
-                    if (tempBatchSize > array.length()) {
-                        tempBatchSize = tempBatchSize / 4;
-                    }
-                    break;
-                case CHECK_SWEET_WINES:
-                    if (tempBatchSize > array.length()) {
-                        tempBatchSize = tempBatchSize & array.length();
-                    }
-                    break;
-                case CHECK_VERMUTS:
-                    if (tempBatchSize > array.length()) {
-                        tempBatchSize = tempBatchSize % array.length();
-                    }
-                    break;
-            }
+            tempBatchSize = getTempBatchSize(tempBatchSize, array, nodeCode);
+            String cityName = getCityName(cityCode);
+
             for (int i = 0; i < array.length(); i++) {
                 long startParsingTime = System.nanoTime();
                 long startPageParsingTime = startParsingTime;
-                if (i < tempBatchSize || i >= tempBatchSize + 4) {
+                if (i < tempBatchSize || i >= tempBatchSize + 3) {
                     continue;
                 }
 
                 Double wineOldPrice = array.getJSONObject(i).getJSONObject("regularPrice").getDouble("value");
                 Double wineNewPrice = array.getJSONObject(i).getJSONObject("cardPrice").getDouble("value");
                 String wineTitle = array.getJSONObject(i).getString("title");
+                Integer wineCount = array.getJSONObject(i).getInt("stock");
                 String imageUrl = null;
 
                 if (array.getJSONObject(i).has(IMAGEURL)) {
@@ -300,7 +288,9 @@ public class ParserReqServiceImpl implements ParserReqService {
                         .put("wineNewPrice", wineNewPrice)
                         .put("wineRating", rating)
                         .put("wineLink", baseUrl + array.getJSONObject(i).getString("skuUrl"))
-                        .put("wineTitle", wineTitle);
+                        .put("wineTitle", wineTitle)
+                        .put("count", wineCount)
+                        .put("cityName", cityName);
 
                 if (jsonArr.getJSONObject(a).getString("nodeCode").equals(CHECK_SPARKLING)) {
                     jsonString.put("wineSparkling", true);
@@ -334,10 +324,6 @@ public class ParserReqServiceImpl implements ParserReqService {
             }
         }
 
-        if (wineList.getJsonList().size() % PAGE_COUNT != 0) {
-            eventLogger.info(W_PAGE_PARSING_FAILED);
-        }
-
         metricsCollector.countParsingComplete("SUCCESS");
         parsingInProgress.decrementAndGet();
 
@@ -346,12 +332,12 @@ public class ParserReqServiceImpl implements ParserReqService {
         parsedWines.set(wineList.getJsonList().size());
         return wineList;
     }
+
     /**
      * Method of parsing additional properties
      *
      * @param jsonString This is container for properties.
-     * @param document This is html page of single wine.
-     *
+     * @param document   This is html page of single wine.
      * @return jsonString.
      */
     public JSONObject getProperties(JSONObject jsonString, Document document) {
@@ -365,23 +351,22 @@ public class ParserReqServiceImpl implements ParserReqService {
             return jsonString;
         }
         for (Element element : elem) {
-            Document iterdoc;
+            Document iterDoc;
 
             try {
-                iterdoc = Jsoup.parse(element.toString());
+                iterDoc = Jsoup.parse(element.toString());
             } catch (Exception ex) {
                 eventLogger.warn(W_SOME_WARN_EVENT, element.toString(), jsonString.getString("wineLink"));
                 return jsonString;
             }
-            if (iterdoc == null) {
+            if (iterDoc == null) {
                 eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
             }
 
-            String title = iterdoc.getElementsByClass("sku-card-tab-params__label-block").text();
-            Elements value = iterdoc.getElementsByClass("sku-card-tab-params__value");
+            String title = iterDoc.getElementsByClass("sku-card-tab-params__label-block").text();
+            Elements value = iterDoc.getElementsByClass("sku-card-tab-params__value");
             if (value.isEmpty()) {
-                eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
-                value = iterdoc.getElementsByClass("link sku-card-tab-params__link");
+                value = iterDoc.getElementsByClass("link sku-card-tab-params__link");
             }
 
             switch (title) {
@@ -429,7 +414,6 @@ public class ParserReqServiceImpl implements ParserReqService {
      * Method of geting html
      *
      * @param productHtml This is URL.
-     *
      * @return document This is html received from URL.
      */
 
@@ -443,5 +427,41 @@ public class ParserReqServiceImpl implements ParserReqService {
                 .get();
         metricsCollector.fetchingDetailsDuration(System.nanoTime() - startFetchingTime);
         return document;
+    }
+
+    private int getTempBatchSize(int tempBatchSize, JSONArray array, String nodeCode) {
+        switch (nodeCode){
+            case CHECK_SPARKLING:
+                if (tempBatchSize > array.length()) {
+                    tempBatchSize = tempBatchSize / 4;
+                }
+                break;
+            case CHECK_SWEET_WINES:
+                if (tempBatchSize > array.length()) {
+                    tempBatchSize = tempBatchSize & array.length();
+                }
+                break;
+            case CHECK_VERMUTS:
+                if (tempBatchSize > array.length()) {
+                    tempBatchSize = tempBatchSize % array.length();
+                }
+                break;
+        }
+        return tempBatchSize;
+    }
+
+    private String getCityName(String cityCode) {
+        String cityName;
+        switch (cityCode){
+            case "0183":
+                cityName = "Москва";
+                break;
+            case "0009":
+                cityName = "Санкт-Петербург";
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + cityCode);
+        }
+        return cityName;
     }
 }
