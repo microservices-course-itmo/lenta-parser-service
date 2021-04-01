@@ -172,7 +172,7 @@ public class ParserReqServiceImpl implements ParserReqService {
 
     private static final String CHECK_SWEET_WINES = "c5a9adffd31b3fdf7af0a1a1bf01051ea";
 
-    private static final Integer MAX_BATCH_SIZE = 4;
+    private static final Integer MAX_BATCH_SIZE = 2;
 
     /**
      * Builder for class with metrics
@@ -220,10 +220,6 @@ public class ParserReqServiceImpl implements ParserReqService {
      */
     @Timed(PARSING_PROCESS_DURATION_SUMMARY)
     public ParserRspImpl getJson(Integer batchSize) {
-        metricsCollector.incParsingStarted();
-        eventLogger.info(I_START_PARSING);
-        parsingInProgress.incrementAndGet();
-
         ExecutorService executor = Executors.newSingleThreadExecutor();
         HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).connectTimeout(Duration.ofSeconds(30)).executor(executor).build();
 
@@ -252,21 +248,25 @@ public class ParserReqServiceImpl implements ParserReqService {
             if (response == null) {
                 eventLogger.info(W_PAGE_PARSING_FAILED);
             }
-            metricsCollector.timeWinePageFetchingDuration(System.nanoTime() - startFetchingTime);
-
             JSONObject jsonObject = new JSONObject(response.body().toString());
             JSONArray array = jsonObject.getJSONArray("skus");
 
             String nodeCode = jsonArr.getJSONObject(a).getString("nodeCode");
             String cityCode = jsonArr.getJSONObject(a).getString("storeId");
 
-            tempBatchSize = getTempBatchSize(tempBatchSize, array, nodeCode);
+            metricsCollector.incParsingStarted(getCityName(cityCode));
+            eventLogger.info(I_START_PARSING);
+            parsingInProgress.incrementAndGet();
+
             String cityName = getCityName(cityCode);
+            metricsCollector.timeWinePageFetchingDuration(System.nanoTime() - startFetchingTime, cityName);
+
+            tempBatchSize = getTempBatchSize(tempBatchSize, array, nodeCode);
 
             for (int i = 0; i < array.length(); i++) {
                 long startParsingTime = System.nanoTime();
                 long startPageParsingTime = startParsingTime;
-                if (i < tempBatchSize || i >= tempBatchSize + 3) {
+                if (i < tempBatchSize || i >= tempBatchSize + MAX_BATCH_SIZE) {
                     continue;
                 }
 
@@ -303,7 +303,7 @@ public class ParserReqServiceImpl implements ParserReqService {
 
                 Document document = null;
                 try {
-                    document = getItemHtml(String.valueOf(productHtml));
+                    document = getItemHtml(String.valueOf(productHtml), cityName);
                 } catch (IOException e) {
                     eventLogger.warn(W_SOME_WARN_EVENT, e);
                 }
@@ -312,21 +312,19 @@ public class ParserReqServiceImpl implements ParserReqService {
 
                 wineList.add(wine);
 
-                metricsCollector.parsingDetailsDuration(System.nanoTime() - startParsingTime);
+                metricsCollector.parsingDetailsDuration(System.nanoTime() - startParsingTime, cityName);
 
                 eventLogger.info(I_WINE_DETAILS_PARSED, jsonString);
 
 
                 if (wineList.getJsonList().size() % PAGE_COUNT == 0) {
                     eventLogger.info(I_WINES_PAGE_PARSED);
-                    metricsCollector.parsingPageDuration(System.nanoTime() - startPageParsingTime);
+                    metricsCollector.parsingPageDuration(System.nanoTime() - startPageParsingTime, cityName);
                 }
             }
+            metricsCollector.countParsingComplete("SUCCESS", cityName);
+            parsingInProgress.decrementAndGet();
         }
-
-        metricsCollector.countParsingComplete("SUCCESS");
-        parsingInProgress.decrementAndGet();
-
         eventLogger.info(I_WINES_PARSED, wineList.getJsonList().size());
         lastSucceededParsingTime.set(System.currentTimeMillis());
         parsedWines.set(wineList.getJsonList().size());
@@ -358,9 +356,6 @@ public class ParserReqServiceImpl implements ParserReqService {
             } catch (Exception ex) {
                 eventLogger.warn(W_SOME_WARN_EVENT, element.toString(), jsonString.getString("wineLink"));
                 return jsonString;
-            }
-            if (iterDoc == null) {
-                eventLogger.info(W_WINE_DETAILS_PARSING_FAILED);
             }
 
             String title = iterDoc.getElementsByClass("sku-card-tab-params__label-block").text();
@@ -417,7 +412,7 @@ public class ParserReqServiceImpl implements ParserReqService {
      * @return document This is html received from URL.
      */
 
-    public Document getItemHtml(String productHtml) throws IOException {
+    public Document getItemHtml(String productHtml, String cityName) throws IOException {
         long startFetchingTime = System.nanoTime();
         Document document = Jsoup.connect(String.valueOf(productHtml))
                 .header("Accept-Encoding", "gzip, deflate")
@@ -425,7 +420,7 @@ public class ParserReqServiceImpl implements ParserReqService {
                 .maxBodySize(0)
                 .timeout(15000)
                 .get();
-        metricsCollector.fetchingDetailsDuration(System.nanoTime() - startFetchingTime);
+        metricsCollector.fetchingDetailsDuration(System.nanoTime() - startFetchingTime, cityName);
         return document;
     }
 
@@ -463,5 +458,6 @@ public class ParserReqServiceImpl implements ParserReqService {
                 throw new IllegalStateException("Unexpected value: " + cityCode);
         }
         return cityName;
+
     }
 }
