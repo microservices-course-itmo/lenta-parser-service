@@ -99,44 +99,44 @@ public class LentaServiceMetricsCollector extends CommonMetricsCollector {
         parseSiteSummary.observe(time);
     }
 
-    public void timeWinePageFetchingDuration(long time) {
+    public void timeWinePageFetchingDuration(long time, String cityName) {
         long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
         prometheusWinePageFetchingDurationSummary.observe(milliTime);
-        Metrics.summary(WINE_PAGE_FETCHING_DURATION).record(milliTime);
+        Metrics.summary(WINE_PAGE_FETCHING_DURATION, cityName).record(milliTime);
     }
 
-    public void parsingPageDuration(long time){
+    public void parsingPageDuration(long time, String cityName){
         long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
-        winePageParsingDurationSummary.observe(milliTime);
-        Metrics.summary(WINE_PAGE_PARSING_DURATION_SUMMARY).record(milliTime);
+        winePageParsingDurationSummary.labels("city", cityName).observe(milliTime);
+        Metrics.summary(WINE_PAGE_PARSING_DURATION_SUMMARY, cityName).record(milliTime);
 
     }
 
-    public void fetchingDetailsDuration(long time) {
+    public void fetchingDetailsDuration(long time, String cityName) {
         long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
-        wineDetailsFetchingDurationSummary.observe(milliTime);
-        Metrics.summary(WINE_DETAILS_FETCHING_DURATION_SUMMARY).record(milliTime);
+        wineDetailsFetchingDurationSummary.labels("city", cityName).observe(milliTime);
+        Metrics.summary(WINE_DETAILS_FETCHING_DURATION_SUMMARY, cityName).record(milliTime);
 
     }
 
-    public void parsingDetailsDuration(long time){
+    public void parsingDetailsDuration(long time, String cityName){
         long milliTime = TimeUnit.NANOSECONDS.toMillis(time);
-        wineDetailsParsingDurationSummary.observe(milliTime);
-        Metrics.summary(WINE_DETAILS_PARSING_DURATION_SUMMARY).record(milliTime);
+        wineDetailsParsingDurationSummary.labels("city", cityName).observe(milliTime);
+        Metrics.summary(WINE_DETAILS_PARSING_DURATION_SUMMARY, cityName).record(milliTime);
     }
 
-    public void countParsingComplete(String status) {
-        Metrics.counter(PARSING_COMPLETE_COUNTER, PARSING_COMPLETE_STATUS_TAG, status).increment();
-        prometheusParsingCompleteCounter.labels(status).inc();
+    public void countParsingComplete(String status, String cityName) {
+        Metrics.counter(PARSING_COMPLETE_COUNTER, PARSING_COMPLETE_STATUS_TAG, status, "city", cityName).increment();
+        prometheusParsingCompleteCounter.labels(status, cityName).inc();
     }
 
-    public void incParsingStarted() {
-        Metrics.counter(PARSING_STARTED_COUNTER).increment();
+    public void incParsingStarted(String cityName) {
+        Metrics.counter(PARSING_STARTED_COUNTER, "city", cityName).increment();
         prometheusParsingStartedCounter.inc();
     }
 
-    public void incWinesSentToKafka(int count) {
-        Metrics.counter(WINES_PUBLISHED_TO_KAFKA_COUNT).increment(count);
+    public void incWinesSentToKafka(int count, String cityName) {
+        Metrics.counter(WINES_PUBLISHED_TO_KAFKA_COUNT, "city", cityName).increment(count);
 
     }
 

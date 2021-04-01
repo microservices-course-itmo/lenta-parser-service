@@ -79,7 +79,7 @@ public class ExportProductDtoList {
 
             eventLogger.info(I_KAFKA_SEND_MESSAGE_SUCCESS, message);
             kafkaSendMessageService.sendMessage(message);
-            metricsCollector.incWinesSentToKafka(wines.size());
+            countWinesByCity(wines);
         } catch (Exception ex) {
             eventLogger.error(E_PRODUCT_LIST_EXPORT_ERROR, ex);
         }
@@ -101,5 +101,27 @@ public class ExportProductDtoList {
         ExportProductDtoListHelper.fillBuilder(builder, wine);
 
         return builder.build();
+    }
+
+    private void countWinesByCity(List<ParserApi.Wine> wines){
+
+        int moscowCounter = 0;
+        int spbCounter = 0;
+
+        for (ParserApi.Wine wine : wines) {
+            switch (wine.getCity()){
+                case "Москва":
+                    moscowCounter++;
+                    break;
+                case "Санкт-Петербург":
+                    spbCounter++;
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + wine.getCity());
+            }
+        }
+
+        metricsCollector.incWinesSentToKafka(moscowCounter, "Москва");
+        metricsCollector.incWinesSentToKafka(spbCounter, "Санкт-Петербург");
     }
 }
